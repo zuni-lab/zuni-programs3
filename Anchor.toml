@@ -1,5 +1,5 @@
 [features]
-seeds = false
+seeds = true
 skip-lint = false
 [programs.localnet]
 private-voting = "8SmFN6YA4VBf3SKtYeB9oDcffdbukRKakBp5JYcnqtEc"
