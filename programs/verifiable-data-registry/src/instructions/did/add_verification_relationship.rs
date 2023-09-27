@@ -8,10 +8,10 @@ use crate::state::*;
 pub struct AddAuthentication<'info> {
     #[account(
         init,
-        seeds=[did.as_bytes(), key_id.as_bytes(), "authentication".as_bytes()],
+        seeds=[Authentication::DISCRIMINATOR.as_bytes(), did.as_bytes(), key_id.as_bytes()],
         bump,
         payer = controller,
-        space = 8 + 4+did.len() + 4+key_id.len() + 4+"authentication".len()
+        space = 8 + 4+Authentication::DISCRIMINATOR.len() + 4+did.len() + 4+key_id.len()
     )]
     pub authentication: Account<'info, Authentication>,
     #[account(seeds=[did.as_bytes()], bump)]
@@ -40,10 +40,10 @@ pub fn add_authentication_handler(
 pub struct AddAssertion<'info> {
     #[account(
         init,
-        seeds=[did.as_bytes(), key_id.as_bytes(), "assertion".as_bytes()],
+        seeds=[Assertion::DISCRIMINATOR.as_bytes(), did.as_bytes(), key_id.as_bytes()],
         bump,
         payer = controller,
-        space = 8 + 4+did.len() + 4+key_id.len() + 4+"assertion".len()
+        space = 8 + 4+Assertion::DISCRIMINATOR.len() + 4+did.len() + 4+key_id.len()
     )]
     pub assertion: Account<'info, Assertion>,
     #[account(seeds=[did.as_bytes()], bump)]
@@ -72,10 +72,10 @@ pub fn add_assertion_handler(
 pub struct AddKeyAgreement<'info> {
     #[account(
         init,
-        seeds=[did.as_bytes(), key_id.as_bytes(), "key_agreement".as_bytes()],
+        seeds=[KeyAgreement::DISCRIMINATOR.as_bytes(), did.as_bytes(), key_id.as_bytes()],
         bump,
         payer = controller,
-        space = 8 + 4+did.len() + 4+key_id.len() + 4+"key_agreement".len()
+        space = 8 + 4+KeyAgreement::DISCRIMINATOR.len() + 4+did.len() + 4+key_id.len()
     )]
     pub key_agreement: Account<'info, KeyAgreement>,
     #[account(seeds=[did.as_bytes()], bump)]
