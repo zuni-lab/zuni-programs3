@@ -1,11 +1,47 @@
 {
-            "compilerOptions": {
-              "types": ["mocha", "chai"],
-              "typeRoots": ["./node_modules/@types"],
-              "lib": ["es2015"],
-              "module": "commonjs",
-              "target": "es6",
-              "esModuleInterop": true
-            }
-          }
-          
+  "compilerOptions": {
+    "baseUrl": ".",
+    "module": "commonjs",
+    "typeRoots": [
+      "./node_modules/@types"
+    ],
+    "target": "ESNext",
+    "composite": true,
+    "outDir": "dist",
+    "rootDir": ".",
+    "allowJs": true,
+    "sourceMap": true,
+    "strict": false,
+    "declaration": true,
+    "noImplicitAny": false,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "incremental": true,
+    "skipLibCheck": true,
+    "strictNullChecks": false,
+    "strictBindCallApply": false,
+    "forceConsistentCasingInFileNames": false,
+    "noFallthroughCasesInSwitch": false,
+    "types": [
+      "node",
+      "mocha",
+      "@types/mocha"
+    ],
+    "paths": {
+      "@/src/*": [
+        "src/*"
+      ],
+    }
+  },
+  "include": [
+    "./**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+  ]
+}
