@@ -35,7 +35,7 @@ export function ecdhEncrypt(
   // CBC - Cipher-Block Chaining (recommended)
 
   // The initialization vector (must be 16 bytes)
-  const iv = [];
+  const iv: number[] = [];
   for (let i = 0; i < 16; ++i) iv.push(i);
 
   const sharedKeyBytes = foldTo16Bytes(AESUtils.hex.toBytes(sharedKey));
@@ -64,7 +64,7 @@ export function ecdhDecrypt(
   // CBC - Cipher-Block Chaining (recommended)
 
   // The initialization vector (must be 16 bytes)
-  const iv = [];
+  const iv: number[] = [];
   for (let i = 0; i < 16; ++i) iv.push(i);
 
   const sharedKeyBytes = foldTo16Bytes(AESUtils.hex.toBytes(sharedKey));

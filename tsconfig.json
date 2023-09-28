@@ -22,10 +22,11 @@
     "allowSyntheticDefaultImports": true,
     "incremental": true,
     "skipLibCheck": true,
-    "strictNullChecks": false,
+    "strictNullChecks": true,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
+    "strictPropertyInitialization": true,
     "types": [
       "node",
       "mocha",

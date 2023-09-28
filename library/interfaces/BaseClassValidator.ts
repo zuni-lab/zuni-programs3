@@ -3,7 +3,7 @@ import { ValidationError, validateSync } from 'class-validator';
 export class ClassPropertyValidationError extends Error {
   constructor(errors: ValidationError[]) {
     const errorMessage = errors
-      .map((error) => Object.values(error.constraints).join('; '))
+      .map((error) => Object.values(error.constraints ?? {}).join('; '))
       .join('; ');
     super(errorMessage);
     this.name = 'ClassPropertyValidationError';
