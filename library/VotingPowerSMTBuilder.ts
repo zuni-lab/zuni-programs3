@@ -8,15 +8,16 @@ import {
 } from 'circomlibjs';
 import { WasmField1Interface } from './interfaces/WasmField1Interface';
 import { VotingPowerSMT } from './interfaces/VotingPowerSMT';
-import { IndividualVotingPower } from './interfaces/IndividualVotingPower';
-import { genKeyPair } from './Secp256k1';
+import {
+  IndividualVotingPower,
+  generateSampleVotingPowers,
+} from './interfaces/IndividualVotingPower';
 import { getCurveFromName } from 'ffjavascript';
 import { SMT_LEVEL } from './constants/SMTConstants';
-import { Secp256k1KeyStringPair } from './interfaces/Secp256k1KeyStringPair.type';
 
 type hashFn = (left: BigNumberish, right: BigNumberish) => Uint8Array;
 
-async function getHashes(): Promise<{
+async function _getHashes(): Promise<{
   hash0: hashFn;
   hash1: hashFn;
   F: WasmField1Interface;
@@ -33,7 +34,7 @@ async function getHashes(): Promise<{
     F: bn128.Fr,
   };
 }
-async function createSMT(
+async function _createSMT(
   hash0: hashFn,
   hash1: hashFn,
   F: WasmField1Interface,
@@ -44,7 +45,7 @@ async function createSMT(
   return smt;
 }
 
-function getSortedVotingPowers(
+export function getSortedVotingPowers(
   votingPowers: Array<IndividualVotingPower>,
 ): Array<IndividualVotingPower> {
   const sortedVotingPowers = votingPowers
@@ -66,7 +67,7 @@ function getSortedVotingPowers(
     });
   return sortedVotingPowers;
 }
-async function getSMTSiblings(
+async function _getSMTSiblings(
   tree: SMT,
   key: number,
 ): Promise<Array<BigNumberish>> {
@@ -107,23 +108,14 @@ describe('VotingPowerSMTBuilder tests', function () {
   this.timeout(5000);
 
   async function testBuildVotingPowerSMT() {
-    const voters: Array<Secp256k1KeyStringPair> = [];
-    for (let i = 0; i < 100; ++i) voters.push(genKeyPair());
-    const votingPowers = voters.map(
-      (voterKeyPair) =>
-        new IndividualVotingPower({
-          votingPower: Math.floor(Math.random() * 1000),
-          voterPublicSigningKey: voterKeyPair.publicKey,
-          voterOrder: 0,
-        }),
-    );
+    const { voters: _voters_, votingPowers } = generateSampleVotingPowers(100);
 
     const votingPowerSMT = await buildVotingPowerSMT(votingPowers);
 
     const sortedVotingPowers = getSortedVotingPowers(votingPowers);
 
     for (let i = 0; i < sortedVotingPowers.length; ++i) {
-      const isVoterIncluded = await votingPowerSMT.verifyUser(
+      const isVoterIncluded = await votingPowerSMT.verifyTotalVotingPowerOfUser(
         sortedVotingPowers[i],
       );
       assert.equal(isVoterIncluded, true);
@@ -133,9 +125,8 @@ describe('VotingPowerSMTBuilder tests', function () {
       const wrongVotingPower = sortedVotingPowers[i].clone();
       wrongVotingPower.votingPower += 1;
 
-      const isWrongVoterIncluded = await votingPowerSMT.verifyUser(
-        wrongVotingPower,
-      );
+      const isWrongVoterIncluded =
+        await votingPowerSMT.verifyTotalVotingPowerOfUser(wrongVotingPower);
       assert.equal(isWrongVoterIncluded, false);
     }
     return true;

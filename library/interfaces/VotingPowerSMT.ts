@@ -8,6 +8,7 @@ import { MAX_TOTAL_VOTING_POWER } from 'library/constants/IndividualVotingPowerC
 import { BigNumberish, SMT, SMTMemDb, newMemEmptyTrie } from 'circomlibjs';
 import { IndividualVotingPower } from './IndividualVotingPower';
 import { WasmField1Interface } from './WasmField1Interface';
+import { SMT_LEVEL } from 'library/constants/SMTConstants';
 
 export class VotingPowerSMT extends BaseClassValidator<VotingPowerSMT> {
   @IsInt()
@@ -43,7 +44,20 @@ export class VotingPowerSMT extends BaseClassValidator<VotingPowerSMT> {
     );
   }
 
-  async verifyUser(voter: IndividualVotingPower): Promise<boolean> {
+  async getSiblings(key: BigNumberish): Promise<Array<BigNumberish>> {
+    const res = await this.merkleTree.find(key);
+    assert.equal(
+      res.found && res.foundValue && res.siblings != undefined,
+      true,
+    );
+    const siblings = res.siblings;
+    while (siblings.length < SMT_LEVEL + 1) siblings.push(0);
+    return siblings;
+  }
+
+  async verifyTotalVotingPowerOfUser(
+    voter: IndividualVotingPower,
+  ): Promise<boolean> {
     const index = voter.voterOrder - 1;
     const isVoterIdIncluded = await this.verifyKeyValuePairInSMT(
       this.F.e(index * 2 + 1),
@@ -84,13 +98,13 @@ export class VotingPowerSMT extends BaseClassValidator<VotingPowerSMT> {
 describe('VotingPowerSMT class tests', function () {
   it('create new VotingPowerSMT objects', async () => {
     const tree = await newMemEmptyTrie();
-    const goodVotingPowerSMT = new VotingPowerSMT({
+    const _goodVotingPowerSMT_ = new VotingPowerSMT({
       totalVotingPower: 20,
       merkleTree: tree,
       individualVotingPowers: undefined,
     });
     assert.throws(() => {
-      const badVotingPowerSMT = new VotingPowerSMT({
+      const _badVotingPowerSMT_ = new VotingPowerSMT({
         totalVotingPower: -1,
         merkleTree: tree,
         individualVotingPowers: [],
@@ -98,7 +112,7 @@ describe('VotingPowerSMT class tests', function () {
     }, ClassPropertyValidationError);
 
     assert.throws(() => {
-      const badVotingPowerSMT = new VotingPowerSMT({
+      const _badVotingPowerSMT_ = new VotingPowerSMT({
         totalVotingPower: MAX_TOTAL_VOTING_POWER + 1,
         merkleTree: tree,
         individualVotingPowers: undefined,
