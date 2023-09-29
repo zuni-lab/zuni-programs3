@@ -6,7 +6,7 @@
     "start": "node dist/main.js",
     "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
     "lint": "eslint . --ext .ts",
-    "test": "./node_modules/.bin/mocha --recursive",
+    "test": "mocha --recursive",
     "testlib": "./node_modules/.bin/mocha ./library --recursive",
     "prepare": "husky install"
   },

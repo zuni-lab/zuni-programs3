@@ -9,7 +9,7 @@ export class ClassPropertyValidationError extends Error {
     this.name = 'ClassPropertyValidationError';
   }
 }
-export class BaseClassValidator {
+export class BaseClassValidator<T> {
   constructor(data: any) {
     Object.assign(this, data);
     this.validateTypeSync();
@@ -18,7 +18,14 @@ export class BaseClassValidator {
   protected validateTypeSync() {
     const errors: ValidationError[] = validateSync(this);
     if (errors.length > 0) {
+      // console.log('Bad assignment to object ', this);
       throw new ClassPropertyValidationError(errors);
     }
+  }
+
+  protected clone(): T {
+    throw new Error(
+      'clone() must be implemented by child classes of BaseClassValidator',
+    );
   }
 }

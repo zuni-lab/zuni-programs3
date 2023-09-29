@@ -2,7 +2,11 @@ import { utils as AESUtils, ModeOfOperation } from 'aes-js';
 import { SHA256 } from 'crypto-js';
 import { ec as EC } from 'elliptic';
 import { assert } from 'chai';
-import { Secp256k1KeyStringPair } from './interfaces/Secp256k1KeyStringPair.type';
+import {
+  Secp256k1KeyStringPair,
+  Secp256k1PrivateKey,
+  Secp256k1PublicKey,
+} from './interfaces/Secp256k1KeyStringPair.type';
 const ec: EC = new EC('secp256k1');
 
 export function getPublicKeyHex(keyPair: EC.KeyPair): string {
@@ -22,14 +26,15 @@ export function foldTo16Bytes(bytes: Uint8Array): Uint8Array {
 }
 
 export function ecdhEncrypt(
-  sender_priKey: string,
-  receiver_pubkey: string,
+  sender_priKey: Secp256k1PrivateKey,
+  receiver_pubkey: Secp256k1PublicKey,
   message: string,
 ): string {
+  // TODO: @galin-chung-nguyen should use a random value for safer encryption
   const sharedKey = ec
-    .keyFromPublic(receiver_pubkey, 'hex')
+    .keyFromPublic(receiver_pubkey.toHexString(), 'hex')
     .getPublic()
-    .mul(ec.keyFromPrivate(sender_priKey).getPrivate())
+    .mul(ec.keyFromPrivate(sender_priKey.toHexString()).getPrivate())
     .encode('hex', false);
 
   // CBC - Cipher-Block Chaining (recommended)
@@ -51,14 +56,14 @@ export function ecdhEncrypt(
 }
 
 export function ecdhDecrypt(
-  receiver_priKey: any,
-  sender_pubkey: any,
+  receiver_priKey: Secp256k1PrivateKey,
+  sender_pubkey: Secp256k1PublicKey,
   cipherText: string,
 ): string {
   const sharedKey = ec
-    .keyFromPublic(sender_pubkey, 'hex')
+    .keyFromPublic(sender_pubkey.toHexString(), 'hex')
     .getPublic()
-    .mul(ec.keyFromPrivate(receiver_priKey).getPrivate())
+    .mul(ec.keyFromPrivate(receiver_priKey.toHexString()).getPrivate())
     .encode('hex', false);
 
   // CBC - Cipher-Block Chaining (recommended)
@@ -81,18 +86,21 @@ export function ecdhDecrypt(
   return plainText;
 }
 
-export function ecdsaSign(privateKey: string, message: string): string {
+export function ecdsaSign(
+  privateKey: Secp256k1PrivateKey,
+  message: string,
+): string {
   const msgBytes = foldTo16Bytes(
     AESUtils.utf8.toBytes(SHA256(message).toString()),
   );
 
   return AESUtils.hex.fromBytes(
-    ec.keyFromPrivate(privateKey).sign(msgBytes).toDER(),
+    ec.keyFromPrivate(privateKey.toHexString()).sign(msgBytes).toDER(),
   );
 }
 
 export function ecdsaVerify(
-  publicKey: string,
+  publicKey: Secp256k1PublicKey,
   message: string,
   signature: string,
 ): boolean {
@@ -101,14 +109,16 @@ export function ecdsaVerify(
   );
 
   const signatureDER = AESUtils.hex.toBytes(signature);
-  return ec.keyFromPublic(publicKey, 'hex').verify(msgBytes, signatureDER);
+  return ec
+    .keyFromPublic(publicKey.toHexString(), 'hex')
+    .verify(msgBytes, signatureDER);
 }
 
 export function genKeyPair(): Secp256k1KeyStringPair {
   const key = ec.genKeyPair();
   return new Secp256k1KeyStringPair({
-    privateKey: getPrivateKeyHex(key),
-    publicKey: getPublicKeyHex(key),
+    privateKey: new Secp256k1PrivateKey(getPrivateKeyHex(key)),
+    publicKey: new Secp256k1PublicKey(getPublicKeyHex(key)),
   });
 }
 
