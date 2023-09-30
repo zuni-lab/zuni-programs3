@@ -6,8 +6,8 @@ import {
   SMTMemDb,
 } from 'circomlibjs';
 import { getCurveFromName } from 'ffjavascript';
-import { BasePoint } from 'library/interfaces/BasePoint';
-import { WasmField1Interface } from 'library/interfaces/WasmField1Interface';
+import { ECCCurvePoint } from 'library/interfaces/BasePoint';
+import { WasmField1Interface } from 'library/interfaces/WasmFieldInterface';
 import { SMT_LEVEL } from '../constants/SMTConstants';
 import { IndividualVotingPower } from './IndividualVotingPower';
 import { VotingPowerSMT } from './VotingPowerSMT';
@@ -53,7 +53,7 @@ export class VotingPowerSMTBuilder {
   }
 
   // public methods
-  static getSortedVotingPowers<P extends BasePoint<P>>(
+  static getSortedVotingPowers<P extends ECCCurvePoint>(
     votingPowers: Array<IndividualVotingPower<P>>,
   ): Array<IndividualVotingPower<P>> {
     const sortedVotingPowers = votingPowers
@@ -76,7 +76,7 @@ export class VotingPowerSMTBuilder {
     return sortedVotingPowers;
   }
 
-  static async buildVotingPowerSMT<P extends BasePoint<P>>(
+  static async buildVotingPowerSMT<P extends ECCCurvePoint>(
     votingPowers: Array<IndividualVotingPower<P>>,
   ): Promise<VotingPowerSMT<P>> {
     const sortedVotingPowers =

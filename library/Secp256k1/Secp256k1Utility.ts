@@ -1,7 +1,5 @@
 import { ModeOfOperation, utils as AESUtils } from 'aes-js';
 import { SHA256 } from 'crypto-js';
-import { ECCPrivateKeyInterface } from 'library/interfaces/ECCPrivateKey';
-import { ECCPublicKeyInterface } from 'library/interfaces/ECCPublicKey';
 import {
   DEFAULT_SECP256K1_PRIVATE_KEY_STRING,
   DEFAULT_SECP256K1_PUBLIC_KEY_STRING,
@@ -59,8 +57,8 @@ export class Secp256k1Utility {
 
   // ECC algorithms
   static ecdhEncrypt(
-    sender_priKey: ECCPrivateKeyInterface<Secp256k1BasePoint>,
-    receiver_pubkey: ECCPublicKeyInterface<Secp256k1BasePoint>,
+    sender_priKey: Secp256k1PrivateKey,
+    receiver_pubkey: Secp256k1PublicKey,
     message: string,
   ): string {
     // TODO: @galin-chung-nguyen should use a random value for safer encryption

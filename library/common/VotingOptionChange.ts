@@ -2,12 +2,12 @@ import BN from 'bn.js';
 import { IsInt, Max, Min } from 'class-validator';
 import { MAX_NUMBER_OF_VOTE_OPTIONS } from 'library/constants/VotingConstants';
 import { BaseClassValidator } from 'library/interfaces/BaseClassValidator';
-import { BasePoint } from 'library/interfaces/BasePoint';
+import { BasePoint, ECCCurvePoint } from 'library/interfaces/BasePoint';
 import { ECCPublicKeyInterface } from 'library/interfaces/ECCPublicKey';
 import { ECCUtility } from 'library/utility/ECCUtility';
 
 export class VotingOptionChange<
-  P extends BasePoint<P>,
+  P extends ECCCurvePoint,
 > extends BaseClassValidator<VotingOptionChange<P>> {
   @IsInt()
   @Min(0)
@@ -37,7 +37,7 @@ export class VotingOptionChange<
     this.committeePublicKey = data.committeePublicKey;
     this.encryptedMaskedVotingPowerAllocated = ECCUtility.getGenerator<P>()
       .mul(this.votedPowerAmount)
-      .add(data.committeePublicKey.toCurvePoint().mul(this.randomness));
+      .add(data.committeePublicKey.toBasePoint().mul(this.randomness));
   }
 
   clone(): VotingOptionChange<P> {
