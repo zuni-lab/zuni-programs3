@@ -1,14 +1,15 @@
 import { Length, Validate } from 'class-validator';
 import { ec as EC } from 'elliptic';
 import { BaseClassValidator } from 'library/interfaces/BaseClassValidator';
+import { BasePoint } from 'library/interfaces/BasePoint';
 import { ECCPublicKeyInterface } from 'library/interfaces/ECCPublicKey';
 import { IsHexadecimalWithoutPrefix } from 'library/interfaces/IsHexadecimalWithoutPrefix';
-import { Secp256k1BasePoint } from './Secp256k1BasePoint';
+import { Secp256k1BasePoint, Secp256k1CurvePoint } from './Secp256k1BasePoint';
 const ec: EC = new EC('secp256k1');
 
 export class Secp256k1PublicKey
   extends BaseClassValidator<Secp256k1PublicKey>
-  implements ECCPublicKeyInterface<Secp256k1BasePoint>
+  implements ECCPublicKeyInterface<Secp256k1CurvePoint>
 {
   @Validate(IsHexadecimalWithoutPrefix)
   @Length(129, 130)
@@ -19,10 +20,11 @@ export class Secp256k1PublicKey
     this.publicKey = publicKey;
   }
 
-  toCurvePoint(): Secp256k1BasePoint {
-    return new Secp256k1BasePoint(
-      ec.keyFromPublic(this.publicKey, 'hex').getPublic(),
-    );
+  toCurvePoint(): Secp256k1CurvePoint {
+    return ec.keyFromPublic(this.publicKey, 'hex').getPublic();
+  }
+  toBasePoint(): BasePoint<Secp256k1CurvePoint> {
+    return new Secp256k1BasePoint(this.toCurvePoint());
   }
 
   toVoterId(): string {

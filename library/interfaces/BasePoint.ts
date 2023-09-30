@@ -1,6 +1,10 @@
 import BN from 'bn.js';
+import { Point } from 'circomlibjs';
+import { curve } from 'elliptic';
 
-export abstract class BasePoint<CurvePoint> {
+export type ECCCurvePoint = curve.base.BasePoint | Point;
+
+export abstract class BasePoint<CurvePoint extends ECCCurvePoint> {
   // abstract encode(enc: "hex", compact: boolean): string;
   // abstract encode(enc: "array" | undefined, compact: boolean): number[];
   // abstract encodeCompressed(enc: "hex"): string;
@@ -16,5 +20,6 @@ export abstract class BasePoint<CurvePoint> {
   abstract getX(): BN;
   abstract getY(): BN;
   abstract eq(p: BasePoint<CurvePoint>): boolean;
+  abstract getRawPoint(): CurvePoint;
   // abstract neg(): BasePoint;
 }
