@@ -2,3 +2,5 @@
 . "$(dirname -- "$0")/_/husky.sh"
 
 yarn lint:fix
+yarn prettier-format # remove unused imports & format code
+git add .

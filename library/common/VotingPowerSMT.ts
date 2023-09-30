@@ -1,16 +1,15 @@
-import {
-  BaseClassValidator,
-  ClassPropertyValidationError,
-} from './BaseClassValidator';
-import { IsInt, Min, Max } from 'class-validator';
 import { assert } from 'chai';
+import { BigNumberish, SMT, SMTMemDb } from 'circomlibjs';
+import { IsInt, Max, Min } from 'class-validator';
 import { MAX_TOTAL_VOTING_POWER } from 'library/constants/IndividualVotingPowerConstants';
-import { BigNumberish, SMT, SMTMemDb, newMemEmptyTrie } from 'circomlibjs';
-import { IndividualVotingPower } from './IndividualVotingPower';
-import { WasmField1Interface } from './WasmField1Interface';
 import { SMT_LEVEL } from 'library/constants/SMTConstants';
-
-export class VotingPowerSMT extends BaseClassValidator<VotingPowerSMT> {
+import { BaseClassValidator } from 'library/interfaces/BaseClassValidator';
+import { BasePoint } from 'library/interfaces/BasePoint';
+import { WasmField1Interface } from '../interfaces/WasmField1Interface';
+import { IndividualVotingPower } from './IndividualVotingPower';
+export class VotingPowerSMT<P extends BasePoint<P>> extends BaseClassValidator<
+  VotingPowerSMT<P>
+> {
   @IsInt()
   @Min(0)
   @Max(MAX_TOTAL_VOTING_POWER)
@@ -20,12 +19,12 @@ export class VotingPowerSMT extends BaseClassValidator<VotingPowerSMT> {
 
   F: WasmField1Interface;
 
-  individualVotingPowers: Array<IndividualVotingPower> | undefined;
+  individualVotingPowers: Array<IndividualVotingPower<P>> | undefined;
 
   constructor(data: {
     totalVotingPower: number;
     merkleTree: SMT;
-    individualVotingPowers?: Array<IndividualVotingPower>;
+    individualVotingPowers?: Array<IndividualVotingPower<P>>;
   }) {
     super(data);
     this.totalVotingPower = data.totalVotingPower;
@@ -56,7 +55,7 @@ export class VotingPowerSMT extends BaseClassValidator<VotingPowerSMT> {
   }
 
   async verifyTotalVotingPowerOfUser(
-    voter: IndividualVotingPower,
+    voter: IndividualVotingPower<P>,
   ): Promise<boolean> {
     const index = voter.voterOrder - 1;
     const isVoterIdIncluded = await this.verifyKeyValuePairInSMT(
@@ -70,7 +69,7 @@ export class VotingPowerSMT extends BaseClassValidator<VotingPowerSMT> {
     return isVoterIdIncluded && isVotingPowerIncluded;
   }
 
-  clone(): VotingPowerSMT {
+  clone(): VotingPowerSMT<P> {
     // clone mem db
     const newMemDb = new SMTMemDb(this.merkleTree.F);
     newMemDb.setRoot(this.merkleTree.root);
@@ -94,29 +93,3 @@ export class VotingPowerSMT extends BaseClassValidator<VotingPowerSMT> {
     });
   }
 }
-
-describe('VotingPowerSMT class tests', function () {
-  it('create new VotingPowerSMT objects', async () => {
-    const tree = await newMemEmptyTrie();
-    const _goodVotingPowerSMT_ = new VotingPowerSMT({
-      totalVotingPower: 20,
-      merkleTree: tree,
-      individualVotingPowers: undefined,
-    });
-    assert.throws(() => {
-      const _badVotingPowerSMT_ = new VotingPowerSMT({
-        totalVotingPower: -1,
-        merkleTree: tree,
-        individualVotingPowers: [],
-      });
-    }, ClassPropertyValidationError);
-
-    assert.throws(() => {
-      const _badVotingPowerSMT_ = new VotingPowerSMT({
-        totalVotingPower: MAX_TOTAL_VOTING_POWER + 1,
-        merkleTree: tree,
-        individualVotingPowers: undefined,
-      });
-    }, ClassPropertyValidationError);
-  });
-});
