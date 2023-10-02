@@ -26,11 +26,30 @@ describe("verifiable-data-registry", () => {
     program.programId
   );
 
-  it("Should initialize DID properly", async () => {
+  it.only("Should initialize DID properly", async () => {
     await program.methods.initializeDid(did).rpc();
     const didDocument = await program.account.didDocument.fetch(didPda);
     expect(didDocument.did === did);
     expect(didDocument.controller === provider.wallet.publicKey);
+
+    const didAccounts = await provider.connection.getProgramAccounts(
+      program.programId,
+      {
+        filters: [
+          {
+            memcmp: {
+              offset: 8,
+              bytes: provider.publicKey.toBase58(),
+            },
+          },
+        ],
+      }
+    );
+    console.log(
+      // anchor.utils.bytes.utf8.decode(
+      didAccounts[0].account.data.slice(8 + 32)
+      // )
+    );
   });
 
   it("Fail to initialize duplicate DID", async () => {
@@ -138,6 +157,9 @@ describe("verifiable-data-registry", () => {
     let authentication = await program.account.authentication.fetch(
       authenticationPda
     );
+    expect(
+      (authentication.discriminator = verificationRelationships.authentication)
+    );
     expect(authentication.did === did);
     expect(authentication.keyId === keyId);
   });
@@ -185,6 +207,7 @@ describe("verifiable-data-registry", () => {
       program.programId
     );
     let assertion = await program.account.assertion.fetch(assertionPda);
+    expect((assertion.discriminator = verificationRelationships.assertion));
     expect(assertion.did === did);
     expect(assertion.keyId === keyId);
   });
@@ -233,6 +256,9 @@ describe("verifiable-data-registry", () => {
     );
     let keyAgreement = await program.account.keyAgreement.fetch(
       keyAgreementPda
+    );
+    expect(
+      (keyAgreement.discriminator = verificationRelationships.keyAgreement)
     );
     expect(keyAgreement.did === did);
     expect(keyAgreement.keyId === keyId);

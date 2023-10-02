@@ -2,8 +2,8 @@ use anchor_lang::prelude::*;
 
 #[account]
 pub struct DidDocument {
-    pub did: String,
     pub controller: Pubkey,
+    pub did: String,
 }
 
 #[account]
@@ -17,6 +17,7 @@ pub struct VerificationMethod {
 
 #[account]
 pub struct Authentication {
+    pub discriminator: String,
     pub did: String,
     pub key_id: String,
 }
@@ -27,6 +28,7 @@ impl Authentication {
 
 #[account]
 pub struct Assertion {
+    pub discriminator: String,
     pub did: String,
     pub key_id: String,
 }
@@ -37,6 +39,7 @@ impl Assertion {
 
 #[account]
 pub struct KeyAgreement {
+    pub discriminator: String,
     pub did: String,
     pub key_id: String,
 }
