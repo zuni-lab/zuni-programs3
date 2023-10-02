@@ -30,6 +30,7 @@ pub fn add_authentication_handler(
         ctx.accounts.did_document.controller == ctx.accounts.controller.key(),
         VerifiableDataRegistryError::Unauthorized,
     );
+    ctx.accounts.authentication.discriminator = Authentication::DISCRIMINATOR.to_string();
     ctx.accounts.authentication.did = did;
     ctx.accounts.authentication.key_id = key_id;
     Ok(())
@@ -62,6 +63,7 @@ pub fn add_assertion_handler(
         ctx.accounts.did_document.controller == ctx.accounts.controller.key(),
         VerifiableDataRegistryError::Unauthorized,
     );
+    ctx.accounts.assertion.discriminator = Assertion::DISCRIMINATOR.to_string();
     ctx.accounts.assertion.did = did;
     ctx.accounts.assertion.key_id = key_id;
     Ok(())
@@ -94,6 +96,7 @@ pub fn add_key_agreement_handler(
         ctx.accounts.did_document.controller == ctx.accounts.controller.key(),
         VerifiableDataRegistryError::Unauthorized,
     );
+    ctx.accounts.key_agreement.discriminator = KeyAgreement::DISCRIMINATOR.to_string();
     ctx.accounts.key_agreement.did = did;
     ctx.accounts.key_agreement.key_id = key_id;
     Ok(())
