@@ -1,0 +1,21 @@
+name: Mocha Tests
+
+on:
+  push:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies and run tests
+        run: |
+          yarn install --frozen-lockfile
+          yarn run test && yarn run testlib
+
+      - name: Eslint check
+        run: yarn run lint
+              
