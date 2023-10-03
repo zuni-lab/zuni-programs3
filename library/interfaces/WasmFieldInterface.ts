@@ -1,3 +1,5 @@
+import { BigNumberish } from 'circomlibjs';
+
 export interface WasmField1Interface {
   // ref: https://github.com/iden3/ffjavascript/blob/master/src/wasm_field1.js
   op2(opName: string, a: Uint8Array, b: Uint8Array): Uint8Array;
@@ -19,7 +21,7 @@ export interface WasmField1Interface {
   sqrt(a: Uint8Array): Uint8Array;
   exp(a: Uint8Array, b: Uint8Array | number): Uint8Array;
   isNegative(a: Uint8Array): boolean;
-  e(a: Uint8Array | number | string, b?: Uint8Array | number): Uint8Array;
+  e(a: BigNumberish, b?: Uint8Array | number): Uint8Array;
   toString(a: Uint8Array, radix?: number): string;
   fromRng(rng: any): Uint8Array;
   random(): Uint8Array;

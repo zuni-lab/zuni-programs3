@@ -18,7 +18,7 @@ export class BaseClassValidator<T> {
   protected validateTypeSync() {
     const errors: ValidationError[] = validateSync(this);
     if (errors.length > 0) {
-      // console.log('Bad assignment to object ', this);
+      // console.log('Bad assignment to object ', this, errors);
       throw new ClassPropertyValidationError(errors);
     }
   }

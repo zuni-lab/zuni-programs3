@@ -1,9 +1,10 @@
 import { assert } from 'chai';
 import { BabyJubCurvePoint } from 'library/BabyJub/BabyJubBasePoint';
 import { FFMathUtility } from 'library/BabyJub/FFMathUtility';
-import { VotingPowerSMTBuilder } from 'library/common/VotingPowerSMTBuilder';
-import { VotingTicketBuilder } from 'library/common/VotingTicketBuilder';
+import { MAX_NUMBER_OF_VOTE_OPTIONS } from 'library/constants/VotingConstants';
 import { ECCCurvePoint } from 'library/interfaces/BasePoint';
+import { VotingPowerSMTBuilder } from 'library/private_voting/VotingPowerSMTBuilder';
+import { VotingTicketBuilder } from 'library/private_voting/VotingTicketBuilder';
 import { Secp256k1CurvePoint } from 'library/Secp256k1/Secp256k1BasePoint';
 import { ECCUtility } from 'library/utility/ECCUtility';
 import { VotingUtility } from 'library/utility/VotingUtility';
@@ -16,7 +17,7 @@ describe('VotingTicketBuilder tests', function () {
   });
 
   async function testBuildVotingTicket<P extends ECCCurvePoint>() {
-    const numberOfVoteOptions = 3;
+    const numberOfVoteOptions = MAX_NUMBER_OF_VOTE_OPTIONS;
     const { voters, votingPowers } =
       VotingUtility.generateSampleVotingPowers<P>(5);
     const votingPowerSMT = await VotingPowerSMTBuilder.buildVotingPowerSMT(
@@ -56,11 +57,13 @@ describe('VotingTicketBuilder tests', function () {
     return true;
   }
 
-  it('buildVotingTicket', (done) => {
-    ECCUtility.init('secp256k1');
-    testBuildVotingTicket<Secp256k1CurvePoint>().then(() => done());
+  it('buildVotingTicket', () => {
+    (async () => {
+      ECCUtility.init('secp256k1');
+      await testBuildVotingTicket<Secp256k1CurvePoint>();
 
-    ECCUtility.init('babyjub');
-    testBuildVotingTicket<BabyJubCurvePoint>().then(() => done());
+      ECCUtility.init('babyjub');
+      await testBuildVotingTicket<BabyJubCurvePoint>();
+    })();
   });
 });

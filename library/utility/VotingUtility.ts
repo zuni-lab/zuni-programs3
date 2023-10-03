@@ -1,6 +1,6 @@
-import { IndividualVotingPower } from 'library/common/IndividualVotingPower';
 import { ECCCurvePoint } from 'library/interfaces/BasePoint';
 import { ECCKeyStringPair } from 'library/interfaces/ECCKeyStringPair';
+import { IndividualVotingPower } from 'library/private_voting/IndividualVotingPower';
 import { CurvePointBasedUtility } from './CurvePointBasedUtility';
 import { ECCUtility } from './ECCUtility';
 
