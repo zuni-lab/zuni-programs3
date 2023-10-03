@@ -1,20 +1,20 @@
-import * as anchor from "@coral-xyz/anchor";
-import { Program } from "@coral-xyz/anchor";
-import { VerifiableDataRegistry } from "../target/types/verifiable_data_registry";
-import { expect } from "chai";
+import * as anchor from '@coral-xyz/anchor';
+import { Program } from '@coral-xyz/anchor';
+import { expect } from 'chai';
+import { VerifiableDataRegistry } from '../target/types/verifiable_data_registry';
 
-const ANCHOR_ERROR_ACCOUNT_NOT_INITIALIZED = "AccountNotInitialized";
-const ANCHOR_ERROR_UNAUTHORIZED = "Unauthorized";
+const ANCHOR_ERROR_ACCOUNT_NOT_INITIALIZED = 'AccountNotInitialized';
+const ANCHOR_ERROR_UNAUTHORIZED = 'Unauthorized';
 
 const DISCRIMINATOR = {
-  did_document: "did_document",
-  verificationMehtod: "verification_method",
-  authentication: "authentication",
-  assertion: "assertion",
-  keyAgreement: "key_agreement",
+  did_document: 'did_document',
+  verificationMehtod: 'verification_method',
+  authentication: 'authentication',
+  assertion: 'assertion',
+  keyAgreement: 'key_agreement',
 };
 
-describe("verifiable-data-registry", () => {
+describe('verifiable-data-registry', () => {
   // Configure the client to use the local cluster.
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
@@ -22,8 +22,8 @@ describe("verifiable-data-registry", () => {
   const program = anchor.workspace
     .VerifiableDataRegistry as Program<VerifiableDataRegistry>;
 
-  describe("initializeDid()", () => {
-    let did = "did:zuni:solana:initializeDid";
+  describe('initializeDid()', () => {
+    const did = 'did:zuni:solana:initializeDid';
     let didSeed: number[];
     let didPda: anchor.web3.PublicKey;
 
@@ -31,18 +31,18 @@ describe("verifiable-data-registry", () => {
       didSeed = [...Buffer.from(anchor.utils.sha256.hash(did)).subarray(0, 20)];
       [didPda] = anchor.web3.PublicKey.findProgramAddressSync(
         [Buffer.from(didSeed)],
-        program.programId
+        program.programId,
       );
     });
 
-    it("Should initialize DID properly", async () => {
+    it('Should initialize DID properly', async () => {
       await program.methods.initializeDid(didSeed, did).rpc();
       const didDocument = await program.account.didDocument.fetch(didPda);
       expect(didDocument.did === did);
       expect(didDocument.controller === provider.wallet.publicKey);
     });
 
-    it("Fail to initialize duplicate DID", async () => {
+    it('Fail to initialize duplicate DID', async () => {
       try {
         await program.methods.initializeDid(didSeed, did).rpc();
       } catch (err) {
@@ -51,13 +51,13 @@ describe("verifiable-data-registry", () => {
     });
   });
 
-  describe("addVerificationMethod()", () => {
-    const did = "did:zuni:solana:addVerificationMethod";
-    const keyId = "key1";
+  describe('addVerificationMethod()', () => {
+    const did = 'did:zuni:solana:addVerificationMethod';
+    const keyId = 'key1';
     const controller = provider.wallet.publicKey;
-    const keyType = "Ed25519VerificationKey2018";
+    const keyType = 'Ed25519VerificationKey2018';
     const publicKeyMultibase =
-      "z6Mkq7J8v9Gy3aK4u5rMx5iZq6Mkq7J8v9Gy3aK4u5rMx5iZq";
+      'z6Mkq7J8v9Gy3aK4u5rMx5iZq6Mkq7J8v9Gy3aK4u5rMx5iZq';
     let didSeed: number[];
     let verificationSeed: number[];
     let verificationPda: anchor.web3.PublicKey;
@@ -71,11 +71,11 @@ describe("verifiable-data-registry", () => {
       verificationSeed = [...Buffer.from(hashed).subarray(0, 20)];
       [verificationPda] = anchor.web3.PublicKey.findProgramAddressSync(
         [Buffer.from(verificationSeed)],
-        program.programId
+        program.programId,
       );
     });
 
-    it("Should add verification method into DID properly", async () => {
+    it('Should add verification method into DID properly', async () => {
       await program.methods
         .addVerificationMethod(
           didSeed,
@@ -83,15 +83,15 @@ describe("verifiable-data-registry", () => {
           keyId,
           keyType,
           publicKeyMultibase,
-          controller
+          controller,
         )
         .rpc();
 
       const verificationMethod = await program.account.verificationMethod.fetch(
-        verificationPda
+        verificationPda,
       );
       expect(
-        verificationMethod.discriminator === DISCRIMINATOR.verificationMehtod
+        verificationMethod.discriminator === DISCRIMINATOR.verificationMehtod,
       );
       expect(verificationMethod.did === did);
       expect(verificationMethod.keyId === keyId);
@@ -100,9 +100,9 @@ describe("verifiable-data-registry", () => {
       expect(verificationMethod.controller === controller);
     });
 
-    it("Fail to add verification without DID", async () => {
+    it('Fail to add verification without DID', async () => {
       try {
-        const notExistDid = "not exist";
+        const notExistDid = 'not exist';
         const notExistDidSeed = [
           ...Buffer.from(anchor.utils.sha256.hash(notExistDid)).subarray(0, 20),
         ];
@@ -113,17 +113,17 @@ describe("verifiable-data-registry", () => {
             keyId,
             keyType,
             publicKeyMultibase,
-            controller
+            controller,
           )
           .rpc();
       } catch (err) {
         expect(
-          err.error.errorCode.code === ANCHOR_ERROR_ACCOUNT_NOT_INITIALIZED
+          err.error.errorCode.code === ANCHOR_ERROR_ACCOUNT_NOT_INITIALIZED,
         );
       }
     });
 
-    it("Fail to add verification with no authen", async () => {
+    it('Fail to add verification with no authen', async () => {
       try {
         const malicious = anchor.web3.Keypair.generate();
         const transaction = new anchor.web3.Transaction().add(
@@ -131,12 +131,12 @@ describe("verifiable-data-registry", () => {
             fromPubkey: provider.publicKey,
             toPubkey: malicious.publicKey,
             lamports: anchor.web3.LAMPORTS_PER_SOL,
-          })
+          }),
         );
         await provider.sendAndConfirm(transaction);
 
         const verificationSeed = [
-          ...Buffer.from("verificationSeed").subarray(0, 20),
+          ...Buffer.from('verificationSeed').subarray(0, 20),
         ];
 
         await program.methods
@@ -146,7 +146,7 @@ describe("verifiable-data-registry", () => {
             keyId,
             keyType,
             publicKeyMultibase,
-            controller
+            controller,
           )
           .accounts({ controller: malicious.publicKey })
           .signers([malicious])
@@ -157,9 +157,9 @@ describe("verifiable-data-registry", () => {
     });
   });
 
-  describe("addAuthentication()", () => {
-    const did = "did:zuni:solana:addAuthentication";
-    const keyId = "key1";
+  describe('addAuthentication()', () => {
+    const did = 'did:zuni:solana:addAuthentication';
+    const keyId = 'key1';
     let didSeed: number[];
     let verificationSeed: number[];
     let verificationPda: anchor.web3.PublicKey;
@@ -178,14 +178,14 @@ describe("verifiable-data-registry", () => {
           didSeed,
           verificationSeed,
           keyId,
-          "keyType",
-          "publicKeyMultibase",
-          provider.publicKey
+          'keyType',
+          'publicKeyMultibase',
+          provider.publicKey,
         )
         .rpc();
       [verificationPda] = anchor.web3.PublicKey.findProgramAddressSync(
         [Buffer.from(verificationSeed)],
-        program.programId
+        program.programId,
       );
 
       const authenticationData = DISCRIMINATOR.authentication + did + keyId;
@@ -195,11 +195,11 @@ describe("verifiable-data-registry", () => {
       ];
       [authenticationPda] = anchor.web3.PublicKey.findProgramAddressSync(
         [Buffer.from(authenticationSeed)],
-        program.programId
+        program.programId,
       );
     });
 
-    it("Should add Authentication into DID properly", async () => {
+    it('Should add Authentication into DID properly', async () => {
       await program.methods
         .addAuthentication(didSeed, verificationSeed, authenticationSeed)
         .accounts({
@@ -208,16 +208,16 @@ describe("verifiable-data-registry", () => {
         .rpc();
 
       const authentication = await program.account.authentication.fetch(
-        authenticationPda
+        authenticationPda,
       );
       expect((authentication.discriminator = DISCRIMINATOR.authentication));
       expect(authentication.did === did);
       expect(authentication.keyId === keyId);
     });
 
-    it("Fail to add Authentication without DID", async () => {
+    it('Fail to add Authentication without DID', async () => {
       try {
-        const notExistDid = "not exist";
+        const notExistDid = 'not exist';
         const notExistDidSeed = [
           ...Buffer.from(anchor.utils.sha256.hash(notExistDid)).subarray(0, 20),
         ];
@@ -225,7 +225,7 @@ describe("verifiable-data-registry", () => {
           .addAuthentication(
             notExistDidSeed,
             verificationSeed,
-            authenticationSeed
+            authenticationSeed,
           )
           .accounts({
             verificationMethod: verificationPda,
@@ -233,27 +233,27 @@ describe("verifiable-data-registry", () => {
           .rpc();
       } catch (err) {
         expect(
-          err.error.errorCode.code === ANCHOR_ERROR_ACCOUNT_NOT_INITIALIZED
+          err.error.errorCode.code === ANCHOR_ERROR_ACCOUNT_NOT_INITIALIZED,
         );
       }
     });
 
-    it("Fail to add Authentication without Verification Method", async () => {
+    it('Fail to add Authentication without Verification Method', async () => {
       try {
-        const notExistVerificationMethod = "not exist";
+        const notExistVerificationMethod = 'not exist';
         const notExistVerificationMethodSeed = [
           ...Buffer.from(
-            anchor.utils.sha256.hash(notExistVerificationMethod)
+            anchor.utils.sha256.hash(notExistVerificationMethod),
           ).subarray(0, 20),
         ];
         const authenticationSeed = [
-          ...Buffer.from("authenticationHashed").subarray(0, 20),
+          ...Buffer.from('authenticationHashed').subarray(0, 20),
         ];
         await program.methods
           .addAuthentication(
             didSeed,
             notExistVerificationMethodSeed,
-            authenticationSeed
+            authenticationSeed,
           )
           .accounts({
             verificationMethod: verificationPda,
@@ -261,12 +261,12 @@ describe("verifiable-data-registry", () => {
           .rpc();
       } catch (err) {
         expect(
-          err.error.errorCode.code === ANCHOR_ERROR_ACCOUNT_NOT_INITIALIZED
+          err.error.errorCode.code === ANCHOR_ERROR_ACCOUNT_NOT_INITIALIZED,
         );
       }
     });
 
-    it("Fail to add Authentication with no authen", async () => {
+    it('Fail to add Authentication with no authen', async () => {
       try {
         const malicious = anchor.web3.Keypair.generate();
         const transaction = new anchor.web3.Transaction().add(
@@ -274,12 +274,12 @@ describe("verifiable-data-registry", () => {
             fromPubkey: provider.publicKey,
             toPubkey: malicious.publicKey,
             lamports: anchor.web3.LAMPORTS_PER_SOL, // number of SOL to send
-          })
+          }),
         );
         await provider.sendAndConfirm(transaction);
 
         const authenticationHashed = anchor.utils.sha256.hash(
-          "maliciousAuthentication"
+          'maliciousAuthentication',
         );
         const maliciousAuthenticationSeed = [
           ...Buffer.from(authenticationHashed).subarray(0, 20),
@@ -288,7 +288,7 @@ describe("verifiable-data-registry", () => {
           .addAuthentication(
             didSeed,
             verificationSeed,
-            maliciousAuthenticationSeed
+            maliciousAuthenticationSeed,
           )
           .accounts({
             verificationMethod: verificationPda,
@@ -302,9 +302,9 @@ describe("verifiable-data-registry", () => {
     });
   });
 
-  describe("addAssertion()", () => {
-    const did = "did:zuni:solana:addAssertion";
-    const keyId = "key1";
+  describe('addAssertion()', () => {
+    const did = 'did:zuni:solana:addAssertion';
+    const keyId = 'key1';
     let didSeed: number[];
     let verificationSeed: number[];
     let verificationPda: anchor.web3.PublicKey;
@@ -323,14 +323,14 @@ describe("verifiable-data-registry", () => {
           didSeed,
           verificationSeed,
           keyId,
-          "keyType",
-          "publicKeyMultibase",
-          provider.publicKey
+          'keyType',
+          'publicKeyMultibase',
+          provider.publicKey,
         )
         .rpc();
       [verificationPda] = anchor.web3.PublicKey.findProgramAddressSync(
         [Buffer.from(verificationSeed)],
-        program.programId
+        program.programId,
       );
 
       const assertionData = DISCRIMINATOR.assertion + did + keyId;
@@ -338,11 +338,11 @@ describe("verifiable-data-registry", () => {
       assertionSeed = [...Buffer.from(assertionHashed).subarray(0, 20)];
       [assertionPda] = anchor.web3.PublicKey.findProgramAddressSync(
         [Buffer.from(assertionSeed)],
-        program.programId
+        program.programId,
       );
     });
 
-    it("Should add Assertion into DID properly", async () => {
+    it('Should add Assertion into DID properly', async () => {
       await program.methods
         .addAssertion(didSeed, verificationSeed, assertionSeed)
         .accounts({
@@ -356,9 +356,9 @@ describe("verifiable-data-registry", () => {
       expect(assertion.keyId === keyId);
     });
 
-    it("Fail to add Assertion without DID", async () => {
+    it('Fail to add Assertion without DID', async () => {
       try {
-        const notExistDid = "not exist";
+        const notExistDid = 'not exist';
         const notExistDidSeed = [
           ...Buffer.from(anchor.utils.sha256.hash(notExistDid)).subarray(0, 20),
         ];
@@ -370,21 +370,21 @@ describe("verifiable-data-registry", () => {
           .rpc();
       } catch (err) {
         expect(
-          err.error.errorCode.code === ANCHOR_ERROR_ACCOUNT_NOT_INITIALIZED
+          err.error.errorCode.code === ANCHOR_ERROR_ACCOUNT_NOT_INITIALIZED,
         );
       }
     });
 
-    it("Fail to add Assertion without Verification Method", async () => {
+    it('Fail to add Assertion without Verification Method', async () => {
       try {
-        const notExistVerificationMethod = "not exist";
+        const notExistVerificationMethod = 'not exist';
         const notExistVerificationMethodSeed = [
           ...Buffer.from(
-            anchor.utils.sha256.hash(notExistVerificationMethod)
+            anchor.utils.sha256.hash(notExistVerificationMethod),
           ).subarray(0, 20),
         ];
         const assertionSeed = [
-          ...Buffer.from("authenticationHashed").subarray(0, 20),
+          ...Buffer.from('authenticationHashed').subarray(0, 20),
         ];
         await program.methods
           .addAssertion(didSeed, notExistVerificationMethodSeed, assertionSeed)
@@ -394,12 +394,12 @@ describe("verifiable-data-registry", () => {
           .rpc();
       } catch (err) {
         expect(
-          err.error.errorCode.code === ANCHOR_ERROR_ACCOUNT_NOT_INITIALIZED
+          err.error.errorCode.code === ANCHOR_ERROR_ACCOUNT_NOT_INITIALIZED,
         );
       }
     });
 
-    it("Fail to add Assertion with no authen", async () => {
+    it('Fail to add Assertion with no authen', async () => {
       try {
         const malicious = anchor.web3.Keypair.generate();
         const transaction = new anchor.web3.Transaction().add(
@@ -407,11 +407,11 @@ describe("verifiable-data-registry", () => {
             fromPubkey: provider.publicKey,
             toPubkey: malicious.publicKey,
             lamports: anchor.web3.LAMPORTS_PER_SOL, // number of SOL to send
-          })
+          }),
         );
         await provider.sendAndConfirm(transaction);
 
-        const assertionHashed = anchor.utils.sha256.hash("maliciousAssertion");
+        const assertionHashed = anchor.utils.sha256.hash('maliciousAssertion');
         const maliciousAssertionSeed = [
           ...Buffer.from(assertionHashed).subarray(0, 20),
         ];
@@ -429,9 +429,9 @@ describe("verifiable-data-registry", () => {
     });
   });
 
-  describe("addKeyAgreement()", () => {
-    const did = "did:zuni:solana:addKeyAgreement";
-    const keyId = "key1";
+  describe('addKeyAgreement()', () => {
+    const did = 'did:zuni:solana:addKeyAgreement';
+    const keyId = 'key1';
     let didSeed: number[];
     let verificationSeed: number[];
     let verificationPda: anchor.web3.PublicKey;
@@ -450,14 +450,14 @@ describe("verifiable-data-registry", () => {
           didSeed,
           verificationSeed,
           keyId,
-          "keyType",
-          "publicKeyMultibase",
-          provider.publicKey
+          'keyType',
+          'publicKeyMultibase',
+          provider.publicKey,
         )
         .rpc();
       [verificationPda] = anchor.web3.PublicKey.findProgramAddressSync(
         [Buffer.from(verificationSeed)],
-        program.programId
+        program.programId,
       );
 
       const keyAgreementData = DISCRIMINATOR.keyAgreement + did + keyId;
@@ -465,11 +465,11 @@ describe("verifiable-data-registry", () => {
       keyAgreementSeed = [...Buffer.from(keyAgreementHashed).subarray(0, 20)];
       [keyAgreementPda] = anchor.web3.PublicKey.findProgramAddressSync(
         [Buffer.from(keyAgreementSeed)],
-        program.programId
+        program.programId,
       );
     });
 
-    it("Should add KeyAgreement into DID properly", async () => {
+    it('Should add KeyAgreement into DID properly', async () => {
       await program.methods
         .addKeyAgreement(didSeed, verificationSeed, keyAgreementSeed)
         .accounts({
@@ -478,16 +478,16 @@ describe("verifiable-data-registry", () => {
         .rpc();
 
       const keyAgreement = await program.account.keyAgreement.fetch(
-        keyAgreementPda
+        keyAgreementPda,
       );
       expect((keyAgreement.discriminator = DISCRIMINATOR.keyAgreement));
       expect(keyAgreement.did === did);
       expect(keyAgreement.keyId === keyId);
     });
 
-    it("Fail to add KeyAgreement without DID", async () => {
+    it('Fail to add KeyAgreement without DID', async () => {
       try {
-        const notExistDid = "not exist";
+        const notExistDid = 'not exist';
         const notExistDidSeed = [
           ...Buffer.from(anchor.utils.sha256.hash(notExistDid)).subarray(0, 20),
         ];
@@ -499,27 +499,27 @@ describe("verifiable-data-registry", () => {
           .rpc();
       } catch (err) {
         expect(
-          err.error.errorCode.code === ANCHOR_ERROR_ACCOUNT_NOT_INITIALIZED
+          err.error.errorCode.code === ANCHOR_ERROR_ACCOUNT_NOT_INITIALIZED,
         );
       }
     });
 
-    it("Fail to add Authentication without Verification Method", async () => {
+    it('Fail to add Authentication without Verification Method', async () => {
       try {
-        const notExistVerificationMethod = "not exist";
+        const notExistVerificationMethod = 'not exist';
         const notExistVerificationMethodSeed = [
           ...Buffer.from(
-            anchor.utils.sha256.hash(notExistVerificationMethod)
+            anchor.utils.sha256.hash(notExistVerificationMethod),
           ).subarray(0, 20),
         ];
         const keyAgreementSeed = [
-          ...Buffer.from("authenticationHashed").subarray(0, 20),
+          ...Buffer.from('authenticationHashed').subarray(0, 20),
         ];
         await program.methods
           .addKeyAgreement(
             didSeed,
             notExistVerificationMethodSeed,
-            keyAgreementSeed
+            keyAgreementSeed,
           )
           .accounts({
             verificationMethod: verificationPda,
@@ -527,12 +527,12 @@ describe("verifiable-data-registry", () => {
           .rpc();
       } catch (err) {
         expect(
-          err.error.errorCode.code === ANCHOR_ERROR_ACCOUNT_NOT_INITIALIZED
+          err.error.errorCode.code === ANCHOR_ERROR_ACCOUNT_NOT_INITIALIZED,
         );
       }
     });
 
-    it("Fail to add KeyAgreement with no authen", async () => {
+    it('Fail to add KeyAgreement with no authen', async () => {
       try {
         const malicious = anchor.web3.Keypair.generate();
         const transaction = new anchor.web3.Transaction().add(
@@ -540,12 +540,12 @@ describe("verifiable-data-registry", () => {
             fromPubkey: provider.publicKey,
             toPubkey: malicious.publicKey,
             lamports: anchor.web3.LAMPORTS_PER_SOL, // number of SOL to send
-          })
+          }),
         );
         await provider.sendAndConfirm(transaction);
 
         const keyAgreementHashed = anchor.utils.sha256.hash(
-          "maliciousKeyAgreement"
+          'maliciousKeyAgreement',
         );
         const maliciousKeyAgreementSeed = [
           ...Buffer.from(keyAgreementHashed).subarray(0, 20),
