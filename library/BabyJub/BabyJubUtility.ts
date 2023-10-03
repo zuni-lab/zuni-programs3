@@ -1,7 +1,7 @@
 import { ModeOfOperation, utils as AESUtils } from 'aes-js';
 import { BN } from 'bn.js';
-import { assert } from 'chai';
 import { SHA256 } from 'crypto-js';
+import { generateRandomBN } from 'library/common/Math';
 import { DEFAULT_BABYJUB_PRIVATE_KEY_STRING } from '../constants/VotingConstants';
 import { BabyJubBasePoint } from './BabyJubBasePoint';
 import { BabyJubKeyStringPair } from './BabyJubKeyStringPair';
@@ -11,23 +11,11 @@ import { FFMathUtility } from './FFMathUtility';
 
 export class BabyJubUtility {
   private static randomPrivateKeyString() {
-    const buffer: Array<number> = new Array(
-      FFMathUtility.MAX_BABYJUB_PRIVATE_KEY_HEX_LENGTH,
-    );
-    for (let i = 0; i < buffer.length; ++i) {
-      buffer[i] = Math.floor(Math.random() * 16);
-    }
-    return buffer.map((x) => x.toString(16)).join('');
-  }
-
-  private static randomPublicKeyString() {
-    const buffer: Array<number> = new Array(
-      FFMathUtility.MAX_BABYJUB_PRIVATE_KEY_HEX_LENGTH * 2,
-    );
-    for (let i = 0; i < buffer.length; ++i) {
-      buffer[i] = Math.floor(Math.random() * 16);
-    }
-    return buffer.map((x) => x.toString(16)).join('');
+    const privateKey = generateRandomBN().toString(10);
+    const buf = FFMathUtility.F.e(privateKey);
+    return Array.from(buf)
+      .map((x) => x.toString(16))
+      .join('');
   }
 
   private static foldTo16Bytes(bytes: Uint8Array): Uint8Array {
@@ -40,35 +28,16 @@ export class BabyJubUtility {
   }
 
   static genKeyPair(): BabyJubKeyStringPair {
-    const privateKeyStr = BabyJubUtility.randomPrivateKeyString();
-    const publicKeyPoint = FFMathUtility.mulPointEscalar(
-      FFMathUtility.getBabyJubGenerator(),
-      new BN(privateKeyStr, 'hex').toString(10),
-    );
-    const publicKeyStr = FFMathUtility.PointToHex(publicKeyPoint);
-    const decryptedPoint = FFMathUtility.PointFromHex(publicKeyStr);
-    assert.equal(
-      decryptedPoint.flat().toString() == publicKeyPoint.flat().toString(),
-      true,
-    );
-    assert.equal(
-      FFMathUtility.PointToHex(publicKeyPoint) == publicKeyStr,
-      true,
-    );
+    const sk = new BabyJubPrivateKey(BabyJubUtility.randomPrivateKeyString());
+    const pk = sk.toPublicKey();
     return new BabyJubKeyStringPair({
-      privateKey: new BabyJubPrivateKey(privateKeyStr),
-      publicKey: new BabyJubPublicKey(publicKeyStr),
+      privateKey: sk,
+      publicKey: pk,
     });
   }
 
   static getDefaultPublicKey(): BabyJubPublicKey {
-    const publicKeyStr = FFMathUtility.PointToHex(
-      FFMathUtility.mulPointEscalar(
-        FFMathUtility.getBabyJubGenerator(),
-        new BN(DEFAULT_BABYJUB_PRIVATE_KEY_STRING, 'hex').toString(10),
-      ),
-    );
-    return new BabyJubPublicKey(publicKeyStr);
+    return BabyJubUtility.getDefaultPrivateKey().toPublicKey();
   }
   static getDefaultPrivateKey(): BabyJubPrivateKey {
     return new BabyJubPrivateKey(DEFAULT_BABYJUB_PRIVATE_KEY_STRING);

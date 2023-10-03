@@ -1,4 +1,4 @@
-import { BN } from 'bn.js';
+import BN from 'bn.js';
 import { Validate } from 'class-validator';
 import { BaseClassValidator } from 'library/interfaces/BaseClassValidator';
 import { ECCPublicKeyInterface } from 'library/interfaces/ECCPublicKey';
@@ -27,9 +27,14 @@ export class BabyJubPublicKey
   }
 
   toVoterId(): string {
-    const x = new BN(this.toCurvePoint()[0]);
-    const y = new BN(this.toCurvePoint()[1]);
-    return x.mul(y).add(x.add(y)).toString(10);
+    // TODO: @galin-chung-nguyen prevent FFjs field overflow
+    const u = FFMathUtility.F.e(this.toCurvePoint()[0]);
+    const v = FFMathUtility.F.e(this.toCurvePoint()[1]);
+
+    const a = FFMathUtility.F.mul(u, v);
+    const b = FFMathUtility.F.add(u, v);
+    const c = FFMathUtility.F.add(a, b);
+    return FFMathUtility.F.toString(c, 10);
   }
 
   toHexString(): string {
@@ -38,5 +43,13 @@ export class BabyJubPublicKey
 
   clone(): BabyJubPublicKey {
     return new BabyJubPublicKey(this.publicKey);
+  }
+
+  getX(): BN {
+    return new BN(FFMathUtility.F.toString(this.toCurvePoint()[0]));
+  }
+
+  getY(): BN {
+    return new BN(FFMathUtility.F.toString(this.toCurvePoint()[1]));
   }
 }
