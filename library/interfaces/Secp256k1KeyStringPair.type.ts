@@ -1,10 +1,10 @@
+import { assert } from 'chai';
+import { Length, Validate } from 'class-validator';
 import {
   BaseClassValidator,
   ClassPropertyValidationError,
 } from './BaseClassValidator';
 import { IsHexadecimalWithoutPrefix } from './IsHexadecimalWithoutPrefix';
-import { Length, Validate, IsInt } from 'class-validator';
-import { assert } from 'chai';
 
 export class Secp256k1KeyStringPair extends BaseClassValidator {
   @Validate(IsHexadecimalWithoutPrefix)

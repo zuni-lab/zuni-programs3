@@ -1,4 +1,4 @@
-import { ValidationError, validateSync } from 'class-validator';
+import { validateSync, ValidationError } from 'class-validator';
 
 export class ClassPropertyValidationError extends Error {
   constructor(errors: ValidationError[]) {

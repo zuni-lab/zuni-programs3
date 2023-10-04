@@ -1,7 +1,7 @@
-import { utils as AESUtils, ModeOfOperation } from 'aes-js';
+import { ModeOfOperation, utils as AESUtils } from 'aes-js';
+import { assert } from 'chai';
 import { SHA256 } from 'crypto-js';
 import { ec as EC } from 'elliptic';
-import { assert } from 'chai';
 import { Secp256k1KeyStringPair } from './interfaces/Secp256k1KeyStringPair.type';
 const ec: EC = new EC('secp256k1');
 
