@@ -1,5 +1,9 @@
 {
   "scripts": {
+    "build": "rimraf dist && tsc",
+    "start:dev": "nodemon",
+    "prettier-format": "prettier --config .prettierrc.json src/**/*.ts --write",
+    "start": "node dist/main.js",
     "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
     "lint": "eslint . --ext .ts",
     "test": "./node_modules/.bin/mocha --recursive",
