@@ -3,6 +3,10 @@ import { assert } from 'chai';
 import { Length, Validate } from 'class-validator';
 import { curve, ec as EC } from 'elliptic';
 import {
+  DEFAULT_SECP256K1_PRIVATE_KEY_STRING,
+  DEFAULT_SECP256K1_PUBLIC_KEY_STRING,
+} from 'library/constants/VotingConstants';
+import {
   BaseClassValidator,
   ClassPropertyValidationError,
 } from './BaseClassValidator';
@@ -17,6 +21,10 @@ export class Secp256k1PublicKey extends BaseClassValidator<Secp256k1PublicKey> {
   constructor(publicKey: string) {
     super({ publicKey });
     this.publicKey = publicKey;
+  }
+
+  static getDefaultSecp256K1PublicKey(): Secp256k1PublicKey {
+    return new Secp256k1PublicKey(DEFAULT_SECP256K1_PUBLIC_KEY_STRING);
   }
 
   toCurvePoint(): curve.base.BasePoint {
@@ -51,6 +59,10 @@ export class Secp256k1PrivateKey extends BaseClassValidator<Secp256k1PrivateKey>
     this.privateKey = privateKey;
   }
 
+  static getDefaultSecp256K1PrivateKey(): Secp256k1PrivateKey {
+    return new Secp256k1PrivateKey(DEFAULT_SECP256K1_PRIVATE_KEY_STRING);
+  }
+
   toBN(): BN {
     return ec.keyFromPrivate(this.privateKey).getPrivate();
   }
@@ -77,7 +89,7 @@ export class Secp256k1KeyStringPair extends BaseClassValidator<Secp256k1KeyStrin
 
 describe('Secp256k1KeyStringPair class tests', function () {
   it('create new key string pair objects', async () => {
-    const key = new Secp256k1KeyStringPair({
+    const _key = new Secp256k1KeyStringPair({
       privateKey: new Secp256k1PrivateKey(
         '208a39787da39e9f78b54aeb2ff38812bbd8ad822485c3a8784adbf84c805725',
       ),
@@ -86,7 +98,7 @@ describe('Secp256k1KeyStringPair class tests', function () {
       ),
     });
     assert.throws(() => {
-      const key = new Secp256k1KeyStringPair({
+      const _key = new Secp256k1KeyStringPair({
         privateKey: new Secp256k1PrivateKey('hello'),
         publicKey: new Secp256k1PublicKey('good bye'),
       });
