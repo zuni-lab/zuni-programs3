@@ -17,7 +17,7 @@ export class BaseClassValidator {
 
   protected validateTypeSync() {
     const errors: ValidationError[] = validateSync(this);
-    if(errors.length > 0){
+    if (errors.length > 0) {
       throw new ClassPropertyValidationError(errors);
     }
   }

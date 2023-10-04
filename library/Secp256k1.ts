@@ -96,9 +96,9 @@ export function ecdsaVerify(
   message: string,
   signature: string,
 ): boolean {
-  const msgBytes: Uint8Array = foldTo16Bytes(AESUtils.utf8.toBytes(
-    SHA256(message).toString(),
-  ));
+  const msgBytes: Uint8Array = foldTo16Bytes(
+    AESUtils.utf8.toBytes(SHA256(message).toString()),
+  );
 
   const signatureDER = AESUtils.hex.toBytes(signature);
   return ec.keyFromPublic(publicKey, 'hex').verify(msgBytes, signatureDER);
