@@ -1,0 +1,7 @@
+fn_args_layout = "Tall"
+use_small_heuristics = "Max"
+max_width = 100
+reorder_modules = false
+reorder_imports = false
+tab_spaces = 2 # for indentation, https://github.com/rust-lang/rustfmt/blob/master/Configurations.md#hard_tabs
+hard_tabs = false
