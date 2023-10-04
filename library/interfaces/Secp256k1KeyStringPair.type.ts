@@ -2,9 +2,9 @@ import {
   BaseClassValidator,
   ClassPropertyValidationError,
 } from './BaseClassValidator';
-import { assert } from 'chai';
 import { IsHexadecimalWithoutPrefix } from './IsHexadecimalWithoutPrefix';
-import { Length, Validate } from 'class-validator';
+import { Length, Validate, IsInt } from 'class-validator';
+import { assert } from 'chai';
 
 export class Secp256k1KeyStringPair extends BaseClassValidator {
   @Validate(IsHexadecimalWithoutPrefix)
@@ -15,9 +15,10 @@ export class Secp256k1KeyStringPair extends BaseClassValidator {
   @Length(129, 130)
   publicKey: string;
 
-  constructor(data: Partial<Secp256k1KeyStringPair>) {
+  constructor(data: Required<Secp256k1KeyStringPair>) {
     super(data);
-    Object.assign(this, data);
+    this.privateKey = data.privateKey;
+    this.publicKey = data.publicKey;
   }
 }
 

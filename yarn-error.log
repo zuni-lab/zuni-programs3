@@ -1,5 +1,5 @@
 Arguments: 
-  /usr/local/bin/node /usr/local/Cellar/yarn/1.22.19/libexec/bin/yarn.js add @types/class-validator
+  /usr/local/bin/node /usr/local/Cellar/yarn/1.22.19/libexec/bin/yarn.js add class-transform
 
 PATH: 
   /usr/local/opt/openjdk/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/usr/local/opt/openjdk/bin:/Users/admin/.cargo/bin:/Users/admin/Library/Application Support/Coursier/bin:/Users/admin/Library/Application Support/Coursier/bin
@@ -14,7 +14,7 @@ Platform:
   darwin x64
 
 Trace: 
-  Error: https://registry.yarnpkg.com/@types%2fclass-validator: Not found
+  Error: https://registry.yarnpkg.com/class-transform: Not found
       at params.callback [as _callback] (/usr/local/Cellar/yarn/1.22.19/libexec/lib/cli.js:66145:18)
       at self.callback (/usr/local/Cellar/yarn/1.22.19/libexec/lib/cli.js:140890:22)
       at Request.emit (node:events:513:28)
@@ -31,12 +31,12 @@ npm manifest:
     "scripts": {
       "build": "rimraf dist && tsc",
       "start:dev": "nodemon",
-      "prettier-format": "prettier --config .prettierrc.json src/**/*.ts --write",
+      "prettier-format": "prettier --config .prettierrc.json library/**/*.ts --write",
       "start": "node dist/main.js",
       "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
       "lint": "eslint . --ext .ts",
-      "test": "./node_modules/.bin/mocha",
-      "testall": "./node_modules/.bin/mocha --recursive"
+      "test": "./node_modules/.bin/mocha --recursive",
+      "testlib": "./node_modules/.bin/mocha ./library --recursive"
     },
     "devDependencies": {
       "@types/aes-js": "^3.1.2",
