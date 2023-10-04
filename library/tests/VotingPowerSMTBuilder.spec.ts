@@ -1,13 +1,20 @@
 import { assert } from 'chai';
+import { BabyJubCurvePoint } from 'library/BabyJub/BabyJubBasePoint';
+import { FFMathUtility } from 'library/BabyJub/FFMathUtility';
 import { VotingPowerSMTBuilder } from 'library/common/VotingPowerSMTBuilder';
-import { BasePoint } from 'library/interfaces/BasePoint';
-import { Secp256k1BasePoint } from 'library/Secp256k1/Secp256k1BasePoint';
+import { ECCCurvePoint } from 'library/interfaces/BasePoint';
+import { Secp256k1CurvePoint } from 'library/Secp256k1/Secp256k1BasePoint';
+import { ECCUtility } from 'library/utility/ECCUtility';
 import { VotingUtility } from 'library/utility/VotingUtility';
 
 describe('VotingPowerSMTBuilder tests', function () {
   this.timeout(5000);
 
-  async function testBuildVotingPowerSMT<P extends BasePoint<P>>() {
+  before(async () => {
+    await FFMathUtility.initialize(); // for babyjub math
+  });
+
+  async function testBuildVotingPowerSMT<_P extends ECCCurvePoint>() {
     const { voters: _voters_, votingPowers } =
       VotingUtility.generateSampleVotingPowers(100);
 
@@ -36,7 +43,14 @@ describe('VotingPowerSMTBuilder tests', function () {
     return true;
   }
 
-  it('buildVotingPowerSMT<P>', (done) => {
-    testBuildVotingPowerSMT<Secp256k1BasePoint>().then(() => done());
+  it('buildVotingPowerSMT', () => {
+    it('secp256k1', (done) => {
+      ECCUtility.init('secp256k1');
+      testBuildVotingPowerSMT<Secp256k1CurvePoint>().then(() => done());
+    });
+    it('babyjub', (done) => {
+      ECCUtility.init('babyjub');
+      testBuildVotingPowerSMT<BabyJubCurvePoint>().then(() => done());
+    });
   });
 });

@@ -1,8 +1,10 @@
 import BN from 'bn.js';
-import { BasePoint } from './BasePoint';
+import { ECCCurvePoint } from './BasePoint';
+import { ECCPublicKeyInterface } from './ECCPublicKey';
 
-export abstract class ECCPrivateKeyInterface<P extends BasePoint<P>> {
+export abstract class ECCPrivateKeyInterface<P extends ECCCurvePoint> {
   abstract toBN(): BN;
   abstract toHexString(): string;
   abstract clone(): ECCPrivateKeyInterface<P>;
+  abstract toPublicKey(): ECCPublicKeyInterface<P>;
 }

@@ -1,6 +1,6 @@
 import BN from 'bn.js';
 import { assert } from 'chai';
-import { BasePoint } from 'library/interfaces/BasePoint';
+import { ECCCurvePoint } from 'library/interfaces/BasePoint';
 import { ECCKeyStringPair } from 'library/interfaces/ECCKeyStringPair';
 import { ECCPublicKeyInterface } from 'library/interfaces/ECCPublicKey';
 import { MAX_TOTAL_VOTING_POWER } from '../constants/IndividualVotingPowerConstants';
@@ -23,7 +23,7 @@ function generateRandomBN(): BN {
 }
 
 export class VotingTicketBuilder {
-  static async buildVotingTicket<P extends BasePoint<P>>(
+  static async buildVotingTicket<P extends ECCCurvePoint>(
     votingPowerAllocation: Array<number>,
     numberOfVoteOptions: number,
     voter: ECCKeyStringPair<P>,
@@ -50,8 +50,8 @@ export class VotingTicketBuilder {
       const individualVotingPower = votingPowerSMT.individualVotingPowers?.find(
         (x) =>
           x.voterPublicSigningKey
-            .toCurvePoint()
-            .eq(voter.getPublicKey().toCurvePoint()),
+            .toBasePoint()
+            .eq(voter.getPublicKey().toBasePoint()),
       );
 
       if (

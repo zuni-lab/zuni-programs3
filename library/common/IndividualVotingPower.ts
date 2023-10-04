@@ -1,11 +1,11 @@
 import { IsInt, Max, Min } from 'class-validator';
 import { MAX_TOTAL_VOTING_POWER } from 'library/constants/IndividualVotingPowerConstants';
 import { BaseClassValidator } from 'library/interfaces/BaseClassValidator';
-import { BasePoint } from 'library/interfaces/BasePoint';
+import { ECCCurvePoint } from 'library/interfaces/BasePoint';
 import { ECCPublicKeyInterface } from 'library/interfaces/ECCPublicKey';
 
 export class IndividualVotingPower<
-  P extends BasePoint<P>,
+  P extends ECCCurvePoint,
 > extends BaseClassValidator<IndividualVotingPower<P>> {
   @IsInt()
   @Min(0)

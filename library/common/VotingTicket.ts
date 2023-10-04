@@ -2,10 +2,10 @@ import { BigNumberish } from 'circomlibjs';
 import { ArrayMaxSize, ArrayMinSize, IsArray } from 'class-validator';
 import { SMT_LEVEL } from 'library/constants/SMTConstants';
 import { BaseClassValidator } from 'library/interfaces/BaseClassValidator';
-import { BasePoint } from 'library/interfaces/BasePoint';
+import { ECCCurvePoint } from 'library/interfaces/BasePoint';
 import { VotingOptionChange } from './VotingOptionChange';
 
-export class VotingTicket<P extends BasePoint<P>> extends BaseClassValidator<
+export class VotingTicket<P extends ECCCurvePoint> extends BaseClassValidator<
   VotingTicket<P>
 > {
   @IsArray()

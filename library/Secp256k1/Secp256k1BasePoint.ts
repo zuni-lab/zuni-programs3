@@ -2,10 +2,11 @@ import BN from 'bn.js';
 import { curve, ec as Secp256k1CurveInterface } from 'elliptic';
 import { BasePoint } from 'library/interfaces/BasePoint';
 const ec: Secp256k1CurveInterface = new Secp256k1CurveInterface('secp256k1');
-export const Secp256k1Curve = ec;
-export { Secp256k1CurveInterface };
+const Secp256k1Curve = ec;
+type Secp256k1CurvePoint = curve.base.BasePoint;
+export { Secp256k1CurveInterface, Secp256k1CurvePoint, Secp256k1Curve };
 
-export class Secp256k1BasePoint implements BasePoint<curve.base.BasePoint> {
+export class Secp256k1BasePoint implements BasePoint<Secp256k1CurvePoint> {
   point: curve.base.BasePoint;
   constructor(p: curve.base.BasePoint) {
     this.point = p;
@@ -24,5 +25,8 @@ export class Secp256k1BasePoint implements BasePoint<curve.base.BasePoint> {
   }
   eq(other: Secp256k1BasePoint): boolean {
     return this.point.eq(other.point);
+  }
+  getRawPoint(): curve.base.BasePoint {
+    return this.point;
   }
 }
