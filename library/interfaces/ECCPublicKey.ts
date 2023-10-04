@@ -1,3 +1,4 @@
+import BN from 'bn.js';
 import { BasePoint, ECCCurvePoint } from './BasePoint';
 
 export abstract class ECCPublicKeyInterface<P extends ECCCurvePoint> {
@@ -6,4 +7,6 @@ export abstract class ECCPublicKeyInterface<P extends ECCCurvePoint> {
   abstract toVoterId(): string;
   abstract toHexString(): string;
   abstract clone(): ECCPublicKeyInterface<P>;
+  abstract getX(): BN;
+  abstract getY(): BN;
 }

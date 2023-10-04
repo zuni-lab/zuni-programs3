@@ -2,7 +2,6 @@ import BN from 'bn.js';
 import { Validate } from 'class-validator';
 import { BaseClassValidator } from 'library/interfaces/BaseClassValidator';
 import { ECCPrivateKeyInterface } from 'library/interfaces/ECCPrivateKey';
-import { ECCPublicKeyInterface } from 'library/interfaces/ECCPublicKey';
 import { IsHexadecimalWithoutPrefix } from 'library/interfaces/IsHexadecimalWithoutPrefix';
 import { BabyJubCurvePoint } from './BabyJubBasePoint';
 import { BabyJubPublicKey } from './BabyJubPublicKey';
@@ -33,7 +32,7 @@ export class BabyJubPrivateKey
     return new BabyJubPrivateKey(this.privateKey);
   }
 
-  toPublicKey(): ECCPublicKeyInterface<BabyJubCurvePoint> {
+  toPublicKey(): BabyJubPublicKey {
     const g = FFMathUtility.getBabyJubGenerator();
     const publicKeyString = FFMathUtility.PointToHex(
       FFMathUtility.mulPointEscalar(g, this.toBN().toString(10)),

@@ -9,3 +9,6 @@ dist
 .env
 */*.ptau
 node_modules
+/artifacts/
+circuits/*/artifacts
+circuits/*/**/artifacts

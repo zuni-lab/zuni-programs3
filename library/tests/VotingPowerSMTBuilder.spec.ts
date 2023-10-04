@@ -1,8 +1,8 @@
 import { assert } from 'chai';
 import { BabyJubCurvePoint } from 'library/BabyJub/BabyJubBasePoint';
 import { FFMathUtility } from 'library/BabyJub/FFMathUtility';
-import { VotingPowerSMTBuilder } from 'library/common/VotingPowerSMTBuilder';
 import { ECCCurvePoint } from 'library/interfaces/BasePoint';
+import { VotingPowerSMTBuilder } from 'library/private_voting/VotingPowerSMTBuilder';
 import { Secp256k1CurvePoint } from 'library/Secp256k1/Secp256k1BasePoint';
 import { ECCUtility } from 'library/utility/ECCUtility';
 import { VotingUtility } from 'library/utility/VotingUtility';

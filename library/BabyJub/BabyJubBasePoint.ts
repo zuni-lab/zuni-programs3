@@ -13,7 +13,6 @@ export class BabyJubBasePoint implements BasePoint<BabyJubCurvePoint> {
   }
 
   add(other: BabyJubBasePoint): BabyJubBasePoint {
-    this.point.toString();
     return new BabyJubBasePoint(
       FFMathUtility.addPoint(this.point, other.point),
     );
@@ -24,13 +23,16 @@ export class BabyJubBasePoint implements BasePoint<BabyJubCurvePoint> {
     );
   }
   getX(): BN {
-    return new BN(this.point[0]);
+    return new BN(FFMathUtility.F.toString(this.point[0], 10));
   }
   getY(): BN {
-    return new BN(this.point[1]);
+    return new BN(FFMathUtility.F.toString(this.point[1]));
   }
   eq(other: BabyJubBasePoint): boolean {
-    return this.point[0] === other.point[0] && this.point[1] === other.point[1];
+    return (
+      this.point[0].toString() === other.point[0].toString() &&
+      this.point[1].toString() === other.point[1].toString()
+    );
   }
   getRawPoint(): BabyJubCurvePoint {
     return this.point;

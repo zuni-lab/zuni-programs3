@@ -1,8 +1,8 @@
 import { assert } from 'chai';
 import { newMemEmptyTrie } from 'circomlibjs';
-import { VotingPowerSMT } from 'library/common/VotingPowerSMT';
-import { MAX_TOTAL_VOTING_POWER } from 'library/constants/IndividualVotingPowerConstants';
+import { MAX_TOTAL_VOTING_POWER } from 'library/constants/VotingConstants';
 import { ClassPropertyValidationError } from 'library/interfaces/BaseClassValidator';
+import { VotingPowerSMT } from 'library/private_voting/VotingPowerSMT';
 
 describe('VotingPowerSMT class tests', function () {
   it('create new VotingPowerSMT objects', async () => {

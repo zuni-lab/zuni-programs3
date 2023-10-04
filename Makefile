@@ -1,9 +1,9 @@
-CIRCUIT_PATH=circuits/v2
-CIRCUIT_NAME:=vc_schema_field_check_verifier
+CIRCUIT_PATH=circuits/voting
+CIRCUIT_NAME:=vote_verifier
 ARTIFACTS_PATH = $(CIRCUIT_PATH)/artifacts
 CIRCUIT_ENTRY_PATH=$(CIRCUIT_PATH)/$(CIRCUIT_NAME).circom
 ###########
-CRS_PATH = circuits/powersOfTau28_hez_final_16.ptau
+CRS_PATH = circuits/powersOfTau28_hez_final_15.ptau
 INPUT_PATH = $(CIRCUIT_PATH)/$(CIRCUIT_NAME)_input.json
 ########### generated artifacts' paths
 PROOF_PATH = $(ARTIFACTS_PATH)/$(CIRCUIT_NAME)_proof.json

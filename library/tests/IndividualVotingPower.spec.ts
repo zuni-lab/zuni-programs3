@@ -1,7 +1,7 @@
 import { assert } from 'chai';
-import { IndividualVotingPower } from 'library/common/IndividualVotingPower';
-import { MAX_TOTAL_VOTING_POWER } from 'library/constants/IndividualVotingPowerConstants';
+import { MAX_TOTAL_VOTING_POWER } from 'library/constants/VotingConstants';
 import { ClassPropertyValidationError } from 'library/interfaces/BaseClassValidator';
+import { IndividualVotingPower } from 'library/private_voting/IndividualVotingPower';
 import { Secp256k1PublicKey } from 'library/Secp256k1/Secp256k1PublicKey';
 
 describe('IndividualVotingPower class tests', function () {
