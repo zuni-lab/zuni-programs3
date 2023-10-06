@@ -1,3 +1,5 @@
+import { assert } from 'chai';
+import * as fs from 'fs';
 import { BabyJubCurvePoint } from 'library/BabyJub/BabyJubBasePoint';
 import { FFMathUtility } from 'library/BabyJub/FFMathUtility';
 import { MAX_NUMBER_OF_VOTE_OPTIONS } from 'library/constants/VotingConstants';
@@ -23,6 +25,7 @@ describe('PrivateVoting tests', function () {
     zkEngine: ZKEngine<ZP>,
     voteVerifierCircuitWasmPath: string,
     voteVerifierCitcuitZkeyPath: string,
+    voteVerifierCitcuitVKeyPath: string,
   ) {
     // Step 1: initialize the voting
     const numberOfVoters = 3;
@@ -50,13 +53,12 @@ describe('PrivateVoting tests', function () {
         committeePublicKey,
       );
       // simulate ticket submission
-      // console.log('Start simulating ticket submission ...');
       const input = validVotingTicket.toCircuitInputs(
         votingPowerSMT.merkleTree.root,
       );
       const {
-        proof: _proof,
-        publicSignals: _publicSignals,
+        proof: proof,
+        publicSignals: publicSignals,
       }: { proof: ZP; publicSignals: snarkjs.PublicSignals } =
         await zkEngine.fullProve(
           input.toCircuitSignals(),
@@ -65,7 +67,20 @@ describe('PrivateVoting tests', function () {
         );
 
       // console.log(`Proof = `, proof);
-      console.log(`Proof generated for voter ${i}`);
+      console.log(
+        `Proof generated for voter ${i}: `,
+        JSON.stringify(proof, null, 2),
+      );
+      console.log(`Public signals =  `, JSON.stringify(publicSignals, null, 2));
+
+      // verification:
+      const result = await zkEngine.verify(
+        JSON.parse(fs.readFileSync(voteVerifierCitcuitVKeyPath, 'utf8')),
+        publicSignals,
+        proof,
+      );
+      assert.equal(result, true);
+      console.log('Proof verification result: ', result);
     }
 
     // Step 3: Vote tally and reveal result
@@ -79,6 +94,7 @@ describe('PrivateVoting tests', function () {
         snarkjs.groth16,
         'circuits/voting/vote_verifier/vote_verifier_js/vote_verifier.wasm',
         'circuits/voting/vote_verifier/vote_verifier_circuit_final.zkey',
+        'circuits/voting/vote_verifier/vote_verifier_verification_key.json',
       )
         .then(() => {
           console.log('Test passed!');

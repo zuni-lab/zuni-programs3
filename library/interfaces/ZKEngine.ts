@@ -26,7 +26,7 @@ export interface ZKEngine<ZP extends ZKProof> {
     publicSignals: PublicSignals;
   }>;
   verify(
-    _vk_verifier: any,
+    _vk_verifier: JSON,
     _publicSignals: PublicSignals,
     _proof: ZP,
     logger?: any,
