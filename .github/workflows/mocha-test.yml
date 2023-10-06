@@ -16,6 +16,12 @@ jobs:
           yarn install --frozen-lockfile
           yarn run test && yarn run testlib
 
+      - name: Crypto experiment tests
+        run: |
+          cd programs/crypto-experiment
+          cargo test
+          cd ..
+          cd ..
+
       - name: Eslint check
         run: yarn run lint
-              
