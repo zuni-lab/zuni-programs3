@@ -12,7 +12,7 @@ pub struct AddVerificationMethod<'info> {
         bump,
         payer = controller,
         space = 
-            8 + 32 + 4 + VerificationMethod::DISCRIMINATOR.len() 
+            8 + 32
             + 4 + did_document.did.len() + 4 + key_id.len() 
             + 4 + r#type.len() + 4 + public_key_multibase.len()
     )]
@@ -38,7 +38,6 @@ pub fn add_verification_method_handler(
         VerifiableDataRegistryError::Unauthorized,
     );
     ctx.accounts.verification_method.controller = controller; // controller of key, not did
-    ctx.accounts.verification_method.discriminator = VerificationMethod::DISCRIMINATOR.to_string();
     ctx.accounts.verification_method.did = ctx.accounts.did_document.did.clone();
     ctx.accounts.verification_method.key_id = key_id;
     ctx.accounts.verification_method.r#type = r#type;
