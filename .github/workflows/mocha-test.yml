@@ -18,7 +18,7 @@ jobs:
 
       - name: Crypto experiment tests
         run: |
-          cd programs/crypto-experiment
+          cd packages/crypto_experiment
           cargo test
           cd ..
           cd ..
