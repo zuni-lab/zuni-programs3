@@ -1,4 +1,4 @@
-import { ModeOfOperation, utils as AESUtils } from 'aes-js';
+import { utils as AESUtils, ModeOfOperation } from 'aes-js';
 import { BN } from 'bn.js';
 import { SHA256 } from 'crypto-js';
 import { generateRandomBN } from 'library/common/Math';

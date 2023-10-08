@@ -8,8 +8,6 @@ import { BabyJubPrivateKey } from 'library/BabyJub/BabyJubPrivateKey';
 import { BabyJubPublicKey } from 'library/BabyJub/BabyJubPublicKey';
 import { BabyJubUtility } from 'library/BabyJub/BabyJubUtility';
 import { FFMathUtility } from 'library/BabyJub/FFMathUtility';
-import { ECCCurvePoint } from 'library/interfaces/BasePoint';
-import { InvalidContextError } from 'library/interfaces/InvalidContextError';
 import {
   Secp256k1BasePoint,
   Secp256k1CurvePoint,
@@ -18,6 +16,8 @@ import { Secp256k1KeyStringPair } from 'library/Secp256k1/Secp256k1KeyStringPair
 import { Secp256k1PrivateKey } from 'library/Secp256k1/Secp256k1PrivateKey';
 import { Secp256k1PublicKey } from 'library/Secp256k1/Secp256k1PublicKey';
 import { Secp256k1Utility } from 'library/Secp256k1/Secp256k1Utility';
+import { ECCCurvePoint } from 'library/interfaces/BasePoint';
+import { InvalidContextError } from 'library/interfaces/InvalidContextError';
 import { BasePoint } from '../interfaces/BasePoint';
 import { ECCKeyStringPair } from '../interfaces/ECCKeyStringPair';
 import { ECCPrivateKeyInterface } from '../interfaces/ECCPrivateKey';

@@ -15,9 +15,9 @@ import {
   decryptPublicCredential,
   generateVCPresentation,
   issueVC,
+  verifyVCPresentation,
   verifyValidPublicCredential,
   verifyValidSchema,
-  verifyVCPresentation,
 } from 'library/verifiable_credential/VCUtility';
 import * as snarkjs from 'snarkjs';
 import { Groth16Proof } from 'snarkjs';

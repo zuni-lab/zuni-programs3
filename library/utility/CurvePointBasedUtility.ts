@@ -1,7 +1,7 @@
 import { BabyJubUtility } from 'library/BabyJub/BabyJubUtility';
+import { Secp256k1Utility } from 'library/Secp256k1/Secp256k1Utility';
 import { ECCCurvePoint } from 'library/interfaces/BasePoint';
 import { InvalidContextError } from 'library/interfaces/InvalidContextError';
-import { Secp256k1Utility } from 'library/Secp256k1/Secp256k1Utility';
 import { BasePoint } from '../interfaces/BasePoint';
 
 export class CurvePointBasedUtility {

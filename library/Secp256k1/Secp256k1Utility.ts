@@ -1,4 +1,4 @@
-import { ModeOfOperation, utils as AESUtils } from 'aes-js';
+import { utils as AESUtils, ModeOfOperation } from 'aes-js';
 import { SHA256 } from 'crypto-js';
 import {
   DEFAULT_SECP256K1_PRIVATE_KEY_STRING,

@@ -1,10 +1,17 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-    "module": "commonjs",
+    "module": "ESNext",
+    // "declaration" : false,
+    // "baseUrl" : "./",
+    // "outFile" : "./dist/bundle.js",
+    "moduleResolution": "node",
+    "alwaysStrict" : true,
+    "removeComments" : true,
     "typeRoots": [
       "./node_modules/@types"
     ],
+    /////////////
     "target": "ESNext",
     "composite": true,
     "outDir": "dist",
@@ -12,11 +19,11 @@
     "allowJs": true,
     "sourceMap": true,
     "strict": false,
-    "declaration": true,
+    // "declaration": true,
     "noImplicitAny": false,
     "esModuleInterop": true,
-    "resolveJsonModule": true,
-    "removeComments": true,
+    // "resolveJsonModule": true,
+    // "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
@@ -29,8 +36,7 @@
     "strictPropertyInitialization": true,
     "types": [
       "node",
-      "mocha",
-      "@types/mocha"
+      "mocha"
     ],
     "paths": {
       "@/src/*": [
@@ -39,7 +45,7 @@
     }
   },
   "include": [
-    "./**/*.ts"
+    "./library/**/*.ts"
   ],
   "exclude": [
     "node_modules",

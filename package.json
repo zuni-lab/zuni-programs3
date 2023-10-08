@@ -1,6 +1,7 @@
 {
+  "type": "module",
   "scripts": {
-    "build": "rimraf dist && tsc",
+    "old-build": "rimraf dist && tsc && rollup -c rollup.config.js",
     "start:dev": "nodemon",
     "prettier-format": "prettier --config .prettierrc.json library/**/**.ts --write",
     "start": "node dist/main.js",
@@ -8,9 +9,16 @@
     "lint": "eslint . --ext .ts",
     "test": "yarn test:lib",
     "test:lib": "mocha ./library --recursive --require ts-node/register",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "build": "rollup -c rollup.config.js"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^22.0.0",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^14.0.0",
+    "@rollup/plugin-replace": "^4.0.0",
+    "@rollup/plugin-typescript": "^11.1.5",
+    "@rollup/plugin-virtual": "^2.0.3",
     "@types/aes-js": "^3.1.2",
     "@types/bn.js": "^5.1.0",
     "@types/chai": "^4.3.5",
@@ -29,11 +37,14 @@
     "nodemon": "^2.0.15",
     "prettier": "^2.6.2",
     "prettier-plugin-organize-imports": "^3.2.3",
-    "rimraf": "^3.0.2",
+    "rimraf": "^5.0.5",
+    "rollup": "^4.0.2",
+    "rollup-plugin-terser": "^7.0.2",
+    "rollup-plugin-visualizer": "^5.6.0",
     "ts-mocha": "^10.0.0",
     "ts-node": "^10.7.0",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^4.9.5"
+    "typescript": "^5.2.2"
   },
   "dependencies": {
     "@coral-xyz/anchor": "^0.28.0",
