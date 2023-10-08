@@ -1,5 +1,15 @@
 import { assert } from 'chai';
-import { BabyJub, BigNumberish, buildBabyjub } from 'circomlibjs';
+import {
+  BabyJub,
+  BigNumberish,
+  buildBabyjub,
+  buildPoseidon,
+  Poseidon,
+  SMT,
+  SMTMemDb,
+} from 'circomlibjs';
+import { getCurveFromName } from 'ffjavascript';
+
 import {
   FFJavascriptCurve,
   WasmField1Interface,
@@ -7,7 +17,8 @@ import {
 import { BabyJubCurvePoint } from './BabyJubBasePoint';
 
 export class FFMathUtility {
-  private static bn128Curve: FFJavascriptCurve | null = null;
+  private static bn128Curve: FFJavascriptCurve;
+  private static poseidon: Poseidon;
   public static F: WasmField1Interface;
   private static isInitialized: boolean = false;
   public static babyJub: BabyJub;
@@ -21,15 +32,47 @@ export class FFMathUtility {
 
   static async initialize(): Promise<void> {
     if (!FFMathUtility.isInitialized || !FFMathUtility.bn128Curve) {
-      // const bn128Curve: FFJavascriptCurve = await getCurveFromName(
-      //   'bn128',
-      //   true,
-      // );
-      // FFMathUtility.bn128Curve = bn128Curve;
+      // baby jub
       FFMathUtility.isInitialized = true;
       FFMathUtility.babyJub = await buildBabyjub();
       FFMathUtility.F = FFMathUtility.babyJub.F;
+      // bn128 & SMT
+      const bn128Curve: FFJavascriptCurve = await getCurveFromName(
+        'bn128',
+        true,
+      );
+      FFMathUtility.bn128Curve = bn128Curve;
+      FFMathUtility.poseidon = await buildPoseidon();
     }
+  }
+
+  private static getHashes() {
+    FFMathUtility.assertInitialized();
+    return {
+      hash0: function (left, right) {
+        return FFMathUtility.poseidon([left, right]);
+      },
+      hash1: function (key, value) {
+        return FFMathUtility.poseidon([
+          key,
+          value,
+          (FFMathUtility.bn128Curve.Fr as any).one,
+        ]);
+      },
+      F: FFMathUtility.bn128Curve.Fr,
+    };
+  }
+
+  static toCircomFieldNumString(x: BigNumberish): string {
+    return FFMathUtility.F.toString(FFMathUtility.F.e(x));
+  }
+
+  static async createSMT(): Promise<SMT> {
+    const hashes = FFMathUtility.getHashes();
+    const db = new SMTMemDb(hashes.F);
+    const rt = await db.getRoot();
+    const smt = new SMT(db, rt, hashes.hash0, hashes.hash1, hashes.F);
+    return smt;
   }
 
   static PointToHex(p: BabyJubCurvePoint): string {
