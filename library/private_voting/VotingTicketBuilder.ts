@@ -97,6 +97,7 @@ export class VotingTicketBuilder {
       });
       return votingTicket;
     } catch (err) {
+      console.log(err);
       if (err instanceof InvalidVotingTicketError) {
         throw err;
       } else {
