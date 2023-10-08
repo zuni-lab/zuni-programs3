@@ -1,14 +1,32 @@
+# Anchor
+#
 .anchor
-.DS_Store
-**/*.rs.bk
-./node_modules
-test-ledger
-.yarn
 target
-dist
+**/*.rs.bk
+
+# OSX
+#
+.DS_Store
+
+# node.js
+#
+node_modules/
+npm-debug.log
+yarn-error.log
+
+
+# Environment variables
+#
 .env
+
+# Circom
+#
+dist
 */*.ptau
-node_modules
 /artifacts/
 circuits/*/artifacts
 circuits/*/**/artifacts
+
+# Solana local cluster
+#
+test-ledger

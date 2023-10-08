@@ -6,8 +6,8 @@
     "start": "node dist/main.js",
     "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
     "lint": "eslint . --ext .ts",
-    "test": "mocha --recursive",
-    "testlib": "./node_modules/.bin/mocha ./library --recursive",
+    "test": "yarn test:lib",
+    "test:lib": "mocha ./library --recursive --require ts-node/register",
     "prepare": "husky install"
   },
   "devDependencies": {
