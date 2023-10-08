@@ -7,8 +7,6 @@ const ANCHOR_ERROR_ACCOUNT_NOT_INITIALIZED = 'AccountNotInitialized';
 const ANCHOR_ERROR_UNAUTHORIZED = 'Unauthorized';
 
 const DISCRIMINATOR = {
-  did_document: 'did_document',
-  verificationMehtod: 'verification_method',
   authentication: 'authentication',
   assertion: 'assertion',
   keyAgreement: 'key_agreement',
@@ -36,6 +34,8 @@ describe('verifiable-data-registry', () => {
     });
 
     it('Should initialize DID properly', async () => {
+      const did =
+        "only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like). Where does it come from? ";
       await program.methods.initializeDid(didSeed, did).rpc();
       const didDocument = await program.account.didDocument.fetch(didPda);
       expect(didDocument.did === did);
@@ -90,9 +90,7 @@ describe('verifiable-data-registry', () => {
       const verificationMethod = await program.account.verificationMethod.fetch(
         verificationPda,
       );
-      expect(
-        verificationMethod.discriminator === DISCRIMINATOR.verificationMehtod,
-      );
+
       expect(verificationMethod.did === did);
       expect(verificationMethod.keyId === keyId);
       expect(verificationMethod.rType === keyType);
@@ -210,7 +208,7 @@ describe('verifiable-data-registry', () => {
       const authentication = await program.account.authentication.fetch(
         authenticationPda,
       );
-      expect((authentication.discriminator = DISCRIMINATOR.authentication));
+
       expect(authentication.did === did);
       expect(authentication.keyId === keyId);
     });
@@ -351,7 +349,7 @@ describe('verifiable-data-registry', () => {
         .rpc();
 
       const assertion = await program.account.assertion.fetch(assertionPda);
-      expect((assertion.discriminator = DISCRIMINATOR.assertion));
+
       expect(assertion.did === did);
       expect(assertion.keyId === keyId);
     });
@@ -480,7 +478,7 @@ describe('verifiable-data-registry', () => {
       const keyAgreement = await program.account.keyAgreement.fetch(
         keyAgreementPda,
       );
-      expect((keyAgreement.discriminator = DISCRIMINATOR.keyAgreement));
+
       expect(keyAgreement.did === did);
       expect(keyAgreement.keyId === keyId);
     });
