@@ -2,9 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "module": "commonjs",
-    "typeRoots": [
-      "./node_modules/@types"
-    ],
+    "typeRoots": ["./node_modules/@types"],
     "target": "ESNext",
     "composite": true,
     "outDir": "dist",
@@ -27,22 +25,11 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "strictPropertyInitialization": true,
-    "types": [
-      "node",
-      "mocha",
-      "@types/mocha"
-    ],
+    "types": ["node", "mocha"],
     "paths": {
-      "@/src/*": [
-        "src/*"
-      ],
+      "@/src/*": ["src/*"]
     }
   },
-  "include": [
-    "./**/*.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-  ]
+  "include": ["./**/*.ts"],
+  "exclude": ["node_modules", "dist"]
 }
