@@ -1,4 +1,4 @@
 {
   "extension": ["ts"],
-  "require": ["ts-node/register", "tsconfig-paths/register"]
+  "require": ["tsconfig-paths/register"]
 }
