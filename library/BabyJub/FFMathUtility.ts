@@ -8,9 +8,9 @@ import { BabyJubCurvePoint } from './BabyJubBasePoint';
 
 export class FFMathUtility {
   private static bn128Curve: FFJavascriptCurve | null = null;
-  private static F: WasmField1Interface;
+  public static F: WasmField1Interface;
   private static isInitialized: boolean = false;
-  private static babyJub: BabyJub;
+  public static babyJub: BabyJub;
   static MAX_BABYJUB_PRIVATE_KEY_HEX_LENGTH = 64;
 
   static assertInitialized() {
@@ -56,17 +56,12 @@ export class FFMathUtility {
     ];
   }
 
+  // '995203441582195749578291179787384436505546430278305826713579947235728471134'
+  // '5472060717959818805561601436314318772137091100104008585924551046643952123905'
   // BabyJub
   static getBabyJubGenerator(): BabyJubCurvePoint {
     FFMathUtility.assertInitialized();
-    return [
-      FFMathUtility.F.e(
-        '995203441582195749578291179787384436505546430278305826713579947235728471134',
-      ),
-      FFMathUtility.F.e(
-        '5472060717959818805561601436314318772137091100104008585924551046643952123905',
-      ),
-    ];
+    return FFMathUtility.babyJub.Base8;
   }
   static addPoint(a: BabyJubCurvePoint, b: BabyJubCurvePoint) {
     FFMathUtility.assertInitialized();

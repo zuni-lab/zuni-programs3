@@ -1,3 +1,4 @@
+import BN from 'bn.js';
 import { Length, Validate } from 'class-validator';
 import { ec as EC } from 'elliptic';
 import { BaseClassValidator } from 'library/interfaces/BaseClassValidator';
@@ -38,5 +39,13 @@ export class Secp256k1PublicKey
 
   clone(): Secp256k1PublicKey {
     return new Secp256k1PublicKey(this.publicKey);
+  }
+
+  getX(): BN {
+    return this.toCurvePoint().getX();
+  }
+
+  getY(): BN {
+    return this.toCurvePoint().getY();
   }
 }

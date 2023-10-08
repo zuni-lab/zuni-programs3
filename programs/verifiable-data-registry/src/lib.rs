@@ -39,27 +39,27 @@ pub mod verifiable_data_registry {
     pub fn add_authentication(
         ctx: Context<AddAuthentication>,
         did_seed: [u8; 20],
-        verification_seed: [u8; 20],
+        veirifcation_seed: [u8; 20],
         authentication_seed: [u8; 20],
     ) -> Result<()> {
-        add_authentication_handler(ctx, did_seed, verification_seed, authentication_seed)
+        add_authentication_handler(ctx, did_seed, veirifcation_seed, authentication_seed)
     }
 
     pub fn add_assertion(
         ctx: Context<AddAssertion>,
         did_seed: [u8; 20],
-        verification_seed: [u8; 20],
+        veirifcation_seed: [u8; 20],
         assertion_seed: [u8; 20],
     ) -> Result<()> {
-        add_assertion_handler(ctx, did_seed, verification_seed, assertion_seed)
+        add_assertion_handler(ctx, did_seed, veirifcation_seed, assertion_seed)
     }
 
     pub fn add_key_agreement(
         ctx: Context<AddKeyAgreement>,
         did_seed: [u8; 20],
-        verification_seed: [u8; 20],
+        veirifcation_seed: [u8; 20],
         key_agreement_seed: [u8; 20],
     ) -> Result<()> {
-        add_key_agreement_handler(ctx, did_seed, verification_seed, key_agreement_seed)
+        add_key_agreement_handler(ctx, did_seed, veirifcation_seed, key_agreement_seed)
     }
 }

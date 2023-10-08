@@ -1,4 +1,11 @@
-export const MAX_NUMBER_OF_VOTE_OPTIONS: number = 1000;
+export const MAX_NUMBER_OF_VOTE_OPTIONS: number = 5;
+export const SMT_LEVEL = 8;
+
+export const MAX_TOTAL_VOTING_POWER = 1000000000000;
+export const MAX_NUMBER_OF_VOTERS = 100;
+
+export const MAX_NUM_BITS_OF_RANDOMNESS = 253;
+
 export const DEFAULT_SECP256K1_PRIVATE_KEY_STRING: string =
   '5e0b54e313bc6e30103aaea69721e35cd668b6f763a1c4df8d8f960d8738462';
 export const DEFAULT_SECP256K1_PUBLIC_KEY_STRING: string =
