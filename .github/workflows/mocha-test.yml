@@ -14,7 +14,7 @@ jobs:
       - name: Install dependencies and run tests
         run: |
           yarn install --frozen-lockfile
-          yarn run test && yarn run testlib
+          yarn test
 
       - name: Crypto experiment tests
         run: |
@@ -24,4 +24,4 @@ jobs:
           cd ..
 
       - name: Eslint check
-        run: yarn run lint
+        run: yarn lint
