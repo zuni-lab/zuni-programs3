@@ -16,21 +16,27 @@ pub struct VerificationMethod {
 }
 
 #[account]
-pub struct Authentication {
+pub struct VerificationRelationship {
     pub did: String,
+    pub relationship: Relationship,
     pub key_id: String,
 }
 
-#[account]
-pub struct Assertion {
-    pub did: String,
-    pub key_id: String,
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Debug, PartialEq)]
+pub enum Relationship {
+    Authentication,
+    Assertion,
+    KeyAgreement,
 }
 
-#[account]
-pub struct KeyAgreement {
-    pub did: String,
-    pub key_id: String,
+impl Relationship {
+    pub fn as_bytes(&self) -> &[u8] {
+        match self {
+            Relationship::Authentication => b"authentication",
+            Relationship::Assertion => b"assertion",
+            Relationship::KeyAgreement => b"key_agreement",
+        }
+    }
 }
 
 #[account]
@@ -45,4 +51,10 @@ pub struct CredentialState {
 pub enum CredentialStatus {
     Active,
     Revoked,
+}
+
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Debug, PartialEq)]
+pub struct Secp256k1Signature {
+    pub recovery_id: u8,
+    pub signature: [u8; 64],
 }
