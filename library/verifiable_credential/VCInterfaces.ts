@@ -22,6 +22,7 @@ import {
 import { BaseClassValidator } from 'library/interfaces/BaseClassValidator';
 import { ECCCurvePoint } from 'library/interfaces/BasePoint';
 import { ECCPrivateKeyInterface } from 'library/interfaces/ECCPrivateKey';
+import { InterfaceWithoutMethodsOf } from 'library/interfaces/InterfaceWithoutMethodsOf';
 import { IsHexadecimalWithoutPrefix } from 'library/interfaces/IsHexadecimalWithoutPrefix';
 import { ZKProof } from 'library/interfaces/ZKEngine';
 import { ECCUtility } from 'library/utility/ECCUtility';
@@ -62,11 +63,6 @@ export enum NativeOperator {
   GTE = '$GTE',
   INVALID_OP = '',
 }
-
-type NonFunctionPropertyNames<T> = {
-  [K in keyof T]: T[K] extends (...args: any[]) => any ? never : K;
-}[keyof T];
-type InterfaceWithoutMethodsOf<T> = Pick<T, NonFunctionPropertyNames<T>>; // https://stackoverflow.com/a/55483981
 
 export class DataSignature<P extends ECCCurvePoint> extends BaseClassValidator<
   DataSignature<P>

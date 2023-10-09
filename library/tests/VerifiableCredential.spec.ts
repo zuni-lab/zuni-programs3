@@ -9,6 +9,7 @@ import {
   PublicCredential,
   Schema,
   VCPresentation,
+  VCSynthesisError,
 } from 'library/verifiable_credential/VCInterfaces';
 import {
   createVerificationSchema,
@@ -18,6 +19,7 @@ import {
   verifyValidPublicCredential,
   verifyValidSchema,
   verifyVCPresentation,
+  verifyVCPresentationFormat,
 } from 'library/verifiable_credential/VCUtility';
 import * as snarkjs from 'snarkjs';
 import { Groth16Proof } from 'snarkjs';
@@ -192,6 +194,14 @@ describe('Verifiable Credential protocol', function () {
   });
 
   it('Verifier verifies VC presentation', async function () {
+    assert.equal(await verifyVCPresentationFormat(vcpresentation), true);
+    const invalidFormatVCP = vcpresentation.clone();
+    invalidFormatVCP.publicCredentials.pop();
+
+    assert.throws(() => {
+      verifyVCPresentationFormat(invalidFormatVCP);
+    }, VCSynthesisError.InvalidVCPresentation);
+
     const vKey = JSON.parse(
       fs.readFileSync(
         // 'circuits/vc/vc_single_field/vc_schema_field_check_verifier_verification_key.json',
