@@ -638,14 +638,10 @@ export async function generateVCPresentation<
   });
 }
 
-export async function verifyVCPresentation<
+export function verifyVCPresentationFormat<
   P extends ECCCurvePoint,
   ZP extends ZKProof,
->(
-  vcpresentation: VCPresentation<P, ZP>,
-  zkEngine: ZKEngine<ZP>,
-  vKey: JSON,
-): Promise<boolean> {
+>(vcpresentation: VCPresentation<P, ZP>): boolean {
   if (!verifyValidSchema(vcpresentation.schema)) {
     throw VCSynthesisError.InvalidSchema;
   }
@@ -665,6 +661,39 @@ export async function verifyVCPresentation<
     ) {
       throw VCSynthesisError.InvalidVCPresentation;
     }
+  }
+
+  for (let i = 0; i < vcpresentation.fieldValidationProofs.length; ++i) {
+    for (let j = 0; j < vcpresentation.fieldValidationProofs[i].length; ++j) {
+      const schemaCheckFieldIndex =
+        vcpresentation.schema.credentialChecks[i].fieldIndexes[j];
+      const credentialFieldIndex = vcpresentation.publicCredentials[
+        i
+      ].fieldIndexes.find(
+        (x) => x.fieldName === schemaCheckFieldIndex.fieldName,
+      );
+      if (!credentialFieldIndex) {
+        throw VCSynthesisError.InvalidVCPresentation;
+      }
+    }
+  }
+
+  return true;
+}
+
+export async function verifyVCPresentation<
+  P extends ECCCurvePoint,
+  ZP extends ZKProof,
+>(
+  vcpresentation: VCPresentation<P, ZP>,
+  schema: Schema<P>,
+  zkEngine: ZKEngine<ZP>,
+  vKey: JSON,
+): Promise<boolean> {
+  /// check signatures & format
+  verifyVCPresentationFormat(vcpresentation);
+  if (JSONStringify(schema) != JSONStringify(vcpresentation.schema)) {
+    throw VCSynthesisError.InvalidVCPresentation;
   }
 
   for (let i = 0; i < vcpresentation.fieldValidationProofs.length; ++i) {
@@ -715,4 +744,21 @@ export async function verifyVCPresentation<
   }
 
   return true;
+}
+
+export async function getRequestedFieldsFromVCPresentation<
+  P extends ECCCurvePoint,
+  ZP extends ZKProof,
+>(
+  vcpresentation: VCPresentation<P, ZP>,
+  verifierPrivateKey: ECCPrivateKeyInterface<P>,
+): Promise<Array<any>> {
+  const data = ECCUtility.ecdhDecrypt(
+    verifierPrivateKey,
+    ECCUtility.newPublicKey(
+      vcpresentation.publicCredentials[0].holderPublicKey,
+    ),
+    vcpresentation.encryptedData,
+  );
+  return JSON.parse(data);
 }

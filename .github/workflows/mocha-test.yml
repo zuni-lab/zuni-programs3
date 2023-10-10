@@ -11,9 +11,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Install dependencies and run tests
+      - name: Install dependencies
+        run: yarn
+
+      - name: Eslint check
+        run: yarn lint
+
+      - name: Run library test
         run: |
-          yarn install --frozen-lockfile
           yarn test
 
       - name: Crypto experiment tests
@@ -22,6 +27,3 @@ jobs:
           cargo test
           cd ..
           cd ..
-
-      - name: Eslint check
-        run: yarn lint

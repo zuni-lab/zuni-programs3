@@ -1,5 +1,6 @@
 import { assert } from 'chai';
 import * as fs from 'fs';
+import JSONstringify from 'json-stable-stringify';
 import { BabyJubCurvePoint } from 'library/BabyJub/BabyJubBasePoint';
 import { FFMathUtility } from 'library/BabyJub/FFMathUtility';
 import { ECCKeyStringPair } from 'library/interfaces/ECCKeyStringPair';
@@ -9,15 +10,18 @@ import {
   PublicCredential,
   Schema,
   VCPresentation,
+  VCSynthesisError,
 } from 'library/verifiable_credential/VCInterfaces';
 import {
   createVerificationSchema,
   decryptPublicCredential,
   generateVCPresentation,
+  getRequestedFieldsFromVCPresentation,
   issueVC,
   verifyValidPublicCredential,
   verifyValidSchema,
   verifyVCPresentation,
+  verifyVCPresentationFormat,
 } from 'library/verifiable_credential/VCUtility';
 import * as snarkjs from 'snarkjs';
 import { Groth16Proof } from 'snarkjs';
@@ -99,6 +103,14 @@ describe('Verifiable Credential protocol', function () {
     assert.equal(verifyValidPublicCredential(invalidPublicCred), false);
 
     publicCredential = issuedVCInPrivateForm.toPublicCredential();
+
+    const parsedPublicCredential = new PublicCredential(
+      JSON.parse(JSON.stringify(publicCredential)),
+    );
+    assert.equal(
+      JSONstringify(parsedPublicCredential),
+      JSONstringify(publicCredential),
+    );
   });
 
   it('Holder decrypt VC', async function () {
@@ -106,6 +118,15 @@ describe('Verifiable Credential protocol', function () {
       publicCredential,
       holderKeys.getPrivateKey(),
     );
+
+    const parsedPrivateCredential = new PrivateCredential(
+      JSON.parse(JSON.stringify(fullCredential)),
+    );
+    assert.equal(
+      JSONstringify(parsedPrivateCredential),
+      JSONstringify(fullCredential),
+    );
+
     console.log(fullCredential);
     assert(fullCredential.credentialSubject !== undefined);
   });
@@ -164,6 +185,9 @@ describe('Verifiable Credential protocol', function () {
 
     assert.equal(verifyValidSchema(schema), true);
 
+    const parsedSchema = new Schema(JSON.parse(JSON.stringify(schema)));
+    assert.equal(JSONstringify(parsedSchema), JSONstringify(schema));
+
     const invalidSchema = schema.clone();
     invalidSchema.verifier += ' ';
     assert.equal(verifyValidSchema(invalidSchema), false);
@@ -192,6 +216,20 @@ describe('Verifiable Credential protocol', function () {
   });
 
   it('Verifier verifies VC presentation', async function () {
+    assert.equal(await verifyVCPresentationFormat(vcpresentation), true);
+    const invalidFormatVCP = vcpresentation.clone();
+    invalidFormatVCP.publicCredentials.pop();
+
+    assert.throws(() => {
+      verifyVCPresentationFormat(invalidFormatVCP);
+    }, VCSynthesisError.InvalidVCPresentation);
+
+    const parsedVCP = new VCPresentation(
+      JSON.parse(JSON.stringify(vcpresentation)),
+    );
+
+    assert.equal(JSONstringify(parsedVCP), JSONstringify(vcpresentation));
+
     const vKey = JSON.parse(
       fs.readFileSync(
         // 'circuits/vc/vc_single_field/vc_schema_field_check_verifier_verification_key.json',
@@ -200,14 +238,21 @@ describe('Verifiable Credential protocol', function () {
       ),
     );
 
-    console.log(vcpresentation);
-
     const res = await verifyVCPresentation(
       vcpresentation,
+      schema,
       snarkjs.groth16,
       vKey,
     );
     assert.equal(res, true);
+
+    console.log(
+      'Requested fields = ',
+      getRequestedFieldsFromVCPresentation(
+        vcpresentation,
+        verifierKeys.getPrivateKey(),
+      ),
+    );
 
     process.exit(0);
   });
