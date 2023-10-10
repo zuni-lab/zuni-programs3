@@ -1,3 +1,4 @@
+# make CIRCUIT_PATH="circuits/vc" CIRCUIT_NAME="vc_schema_field_check_verifier" 
 CIRCUIT_PATH=circuits/voting
 CIRCUIT_NAME:=vote_verifier
 ARTIFACTS_PATH = $(CIRCUIT_PATH)/artifacts

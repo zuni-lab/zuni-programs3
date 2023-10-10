@@ -22,7 +22,7 @@ export interface WasmField1Interface {
   exp(a: Uint8Array, b: Uint8Array | number): Uint8Array;
   isNegative(a: Uint8Array): boolean;
   e(a: BigNumberish, b?: Uint8Array | number): Uint8Array;
-  toString(a: Uint8Array, radix?: number): string;
+  toString(a: BigNumberish, radix?: number): string;
   fromRng(rng: any): Uint8Array;
   random(): Uint8Array;
   toObject(a: Uint8Array): any;
