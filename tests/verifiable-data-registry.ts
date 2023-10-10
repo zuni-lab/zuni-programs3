@@ -23,15 +23,15 @@ const VERIFICATION_RELATIONSHIP = {
   },
 };
 
-const duplicate_err = (address) => {
-  return `Allocate: account Address { address: ${address}, base: None } already in use`;
-};
+// const duplicate_err = (address) => {
+//   return `Allocate: account Address { address: ${address}, base: None } already in use`;
+// };
 
-const DISCRIMINATOR = {
-  authentication: 'authentication',
-  assertion: 'assertion',
-  keyAgreement: 'key_agreement',
-};
+// const DISCRIMINATOR = {
+//   authentication: 'authentication',
+//   assertion: 'assertion',
+//   keyAgreement: 'key_agreement',
+// };
 
 describe('verifiable-data-registry', () => {
   // Configure the client to use the local cluster.
@@ -127,10 +127,6 @@ describe('verifiable-data-registry', () => {
     it('Fail to add verification without DID', async () => {
       try {
         const notExistDid = 'not exist';
-        const [notExistDidPda] = anchor.web3.PublicKey.findProgramAddressSync(
-          [keccak_256(did)],
-          program.programId,
-        );
         await program.methods
           .addVerificationMethod(
             notExistDid,
