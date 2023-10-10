@@ -209,12 +209,14 @@ describe('verifiable-data-registry', () => {
         .accounts({ didDocument: didPda })
         .rpc();
 
+      const publicKeyMultibase =
+        'z' + anchor.web3.Keypair.generate().publicKey.toBase58();
       await program.methods
         .addVerificationMethod(
           did,
           keyId,
           'keyType',
-          'publicKeyMultibase',
+          publicKeyMultibase,
           provider.publicKey,
         )
         .accounts({
@@ -380,7 +382,10 @@ describe('verifiable-data-registry', () => {
     const ec = new EC('secp256k1');
     const authenticationKeypair = ec.genKeyPair();
     const publicKeyMultibase =
-      'f' + authenticationKeypair.getPublic().encode('hex', false).slice(2);
+      'z' +
+      anchor.utils.bytes.bs58.encode(
+        Buffer.from(authenticationKeypair.getPublic('hex').slice(2), 'hex'),
+      );
 
     const [didPda] = anchor.web3.PublicKey.findProgramAddressSync(
       [Buffer.from(keccak_256(did))],

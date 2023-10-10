@@ -6,4 +6,6 @@ pub enum VerifiableDataRegistryError {
     Unauthorized,
     #[msg("Not support key type")]
     NotSupportKeyType,
+    #[msg("Invalid multibase")]
+    InvalidMultibase,
 }

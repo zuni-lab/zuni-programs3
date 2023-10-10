@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 use solana_program::keccak;
 
-use crate::state::*;
+use crate::{state::*, error::VerifiableDataRegistryError};
 
 #[derive(Accounts)]
 #[instruction(did: String, key_id: String, r#type: String, public_key_multibase: String)]
@@ -37,6 +37,9 @@ pub fn add_verification_method_handler(
     public_key_multibase: String,
     controller: Pubkey,
 ) -> Result<()> {
+    let decode_multibase_res = multibase::decode(&public_key_multibase);
+    require!(decode_multibase_res.is_ok(), VerifiableDataRegistryError::InvalidMultibase);
+    
     ctx.accounts.verification_method.controller = controller; // controller of key, not did
     ctx.accounts.verification_method.did = did;
     ctx.accounts.verification_method.key_id = key_id;
