@@ -5,6 +5,7 @@ mod instructions;
 mod state;
 
 use instructions::*;
+use state::*;
 
 declare_id!("DaSnbN9itw4MSTaw2ZMa6h72cgazzSmBBFYb7PtvpYow");
 
@@ -12,54 +13,71 @@ declare_id!("DaSnbN9itw4MSTaw2ZMa6h72cgazzSmBBFYb7PtvpYow");
 pub mod verifiable_data_registry {
     use super::*;
 
-    pub fn initialize_did(ctx: Context<InitializeDID>, seed: [u8; 20], did: String) -> Result<()> {
-        initialize_did_handler(ctx, seed, did)
+    pub fn initialize_did(ctx: Context<InitializeDID>, did: String) -> Result<()> {
+        initialize_did_handler(ctx, did)
     }
 
     pub fn add_verification_method(
         ctx: Context<AddVerificationMethod>,
-        did_seed: [u8; 20],
-        verification_seed: [u8; 20],
+        did: String,
         key_id: String,
         r#type: String,
         public_key_multibase: String,
         controller: Pubkey,
     ) -> Result<()> {
-        add_verification_method_handler(
+        add_verification_method_handler(ctx, did, key_id, r#type, public_key_multibase, controller)
+    }
+
+    pub fn add_verification_relationship(
+        ctx: Context<AddVerificationRelationship>,
+        did: String,
+        relationship: Relationship,
+        key_id: String,
+    ) -> Result<()> {
+        add_verification_relationship_handler(ctx, did, relationship, key_id)
+    }
+
+    pub fn add_credential(
+        ctx: Context<AddCredential>,
+        did: String,
+        authentication_id: String,
+        credential_id: String,
+        expire_at: Option<u64>,
+        // secp256k1_signature: Secp256k1Signature,
+        recovery_id: u8,
+        signature: [u8; 64],
+    ) -> Result<()> {
+        add_credential_handler(
             ctx,
-            did_seed,
-            verification_seed,
-            key_id,
-            r#type,
-            public_key_multibase,
-            controller,
+            did,
+            authentication_id,
+            credential_id,
+            expire_at,
+            Secp256k1Signature {
+                recovery_id,
+                signature,
+            },
         )
     }
 
-    pub fn add_authentication(
-        ctx: Context<AddAuthentication>,
-        did_seed: [u8; 20],
-        veirifcation_seed: [u8; 20],
-        authentication_seed: [u8; 20],
+    pub fn revoke_credential(
+        ctx: Context<RevokeCredential>,
+        did: String,
+        authentication_id: String,
+        credential_id: String,
+        // secp256k1_signature: Secp256k1Signature,
+        recovery_id: u8,
+        signature: [u8; 64],
     ) -> Result<()> {
-        add_authentication_handler(ctx, did_seed, veirifcation_seed, authentication_seed)
-    }
-
-    pub fn add_assertion(
-        ctx: Context<AddAssertion>,
-        did_seed: [u8; 20],
-        veirifcation_seed: [u8; 20],
-        assertion_seed: [u8; 20],
-    ) -> Result<()> {
-        add_assertion_handler(ctx, did_seed, veirifcation_seed, assertion_seed)
-    }
-
-    pub fn add_key_agreement(
-        ctx: Context<AddKeyAgreement>,
-        did_seed: [u8; 20],
-        veirifcation_seed: [u8; 20],
-        key_agreement_seed: [u8; 20],
-    ) -> Result<()> {
-        add_key_agreement_handler(ctx, did_seed, veirifcation_seed, key_agreement_seed)
+        revoke_credential_handler(
+            ctx,
+            did,
+            authentication_id,
+            credential_id,
+            Secp256k1Signature {
+                recovery_id,
+                signature,
+            },
+        )
     }
 }

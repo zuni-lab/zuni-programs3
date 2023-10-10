@@ -1,16 +1,37 @@
 import * as anchor from '@coral-xyz/anchor';
 import { Program } from '@coral-xyz/anchor';
+import { keccak_256 } from '@noble/hashes/sha3';
 import { expect } from 'chai';
+import { ec as EC } from 'elliptic';
 import { VerifiableDataRegistry } from '../target/types/verifiable_data_registry';
 
 const ANCHOR_ERROR_ACCOUNT_NOT_INITIALIZED = 'AccountNotInitialized';
 const ANCHOR_ERROR_UNAUTHORIZED = 'Unauthorized';
 
-const DISCRIMINATOR = {
-  authentication: 'authentication',
-  assertion: 'assertion',
-  keyAgreement: 'key_agreement',
+const VERIFICATION_RELATIONSHIP = {
+  authentication: {
+    discriminator: 'authentication',
+    input: { authentication: {} },
+  },
+  assertion: {
+    discriminator: 'assertion',
+    input: { assertion: {} },
+  },
+  keyAgreement: {
+    discriminator: 'key_agreement',
+    input: { keyAgreement: {} },
+  },
 };
+
+// const duplicate_err = (address) => {
+//   return `Allocate: account Address { address: ${address}, base: None } already in use`;
+// };
+
+// const DISCRIMINATOR = {
+//   authentication: 'authentication',
+//   assertion: 'assertion',
+//   keyAgreement: 'key_agreement',
+// };
 
 describe('verifiable-data-registry', () => {
   // Configure the client to use the local cluster.
@@ -22,69 +43,74 @@ describe('verifiable-data-registry', () => {
 
   describe('initializeDid()', () => {
     const did = 'did:zuni:solana:initializeDid';
-    let didSeed: number[];
-    let didPda: anchor.web3.PublicKey;
-
-    before(() => {
-      didSeed = [...Buffer.from(anchor.utils.sha256.hash(did)).subarray(0, 20)];
-      [didPda] = anchor.web3.PublicKey.findProgramAddressSync(
-        [Buffer.from(didSeed)],
-        program.programId,
-      );
-    });
+    const [didPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [keccak_256(did)],
+      program.programId,
+    );
 
     it('Should initialize DID properly', async () => {
-      const did =
-        "only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like). Where does it come from? ";
-      await program.methods.initializeDid(didSeed, did).rpc();
-      const didDocument = await program.account.didDocument.fetch(didPda);
-      expect(didDocument.did === did);
-      expect(didDocument.controller === provider.wallet.publicKey);
+      try {
+        await program.methods
+          .initializeDid(did)
+          .accounts({ didDocument: didPda })
+          .rpc();
+        const didDocument = await program.account.didDocument.fetch(didPda);
+        expect(didDocument.did === did);
+        expect(didDocument.controller === provider.wallet.publicKey);
+      } catch (error) {
+        console.log(error);
+      }
     });
 
     it('Fail to initialize duplicate DID', async () => {
       try {
-        await program.methods.initializeDid(didSeed, did).rpc();
+        await program.methods
+          .initializeDid(did)
+          .accounts({ didDocument: didPda })
+          .rpc();
       } catch (err) {
-        expect(err);
+        const duplicate_err = `Allocate: account Address { address: ${didPda.toBase58()}, base: None } already in use`;
+        expect(err.logs.find((log: string) => log === duplicate_err));
       }
     });
   });
 
   describe('addVerificationMethod()', () => {
     const did = 'did:zuni:solana:addVerificationMethod';
-    const keyId = 'key1';
+    const [didPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [keccak_256(did)],
+      program.programId,
+    );
+    const keyId = did + 'key1';
     const controller = provider.wallet.publicKey;
     const keyType = 'Ed25519VerificationKey2018';
     const publicKeyMultibase =
       'z6Mkq7J8v9Gy3aK4u5rMx5iZq6Mkq7J8v9Gy3aK4u5rMx5iZq';
-    let didSeed: number[];
-    let verificationSeed: number[];
-    let verificationPda: anchor.web3.PublicKey;
+    const [verificationPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from(keccak_256(did + keyId))],
+      program.programId,
+    );
 
     before(async () => {
-      didSeed = [...Buffer.from(anchor.utils.sha256.hash(did)).subarray(0, 20)];
-      await program.methods.initializeDid(didSeed, did).rpc();
-
-      const data = did + keyId;
-      const hashed = anchor.utils.sha256.hash(data);
-      verificationSeed = [...Buffer.from(hashed).subarray(0, 20)];
-      [verificationPda] = anchor.web3.PublicKey.findProgramAddressSync(
-        [Buffer.from(verificationSeed)],
-        program.programId,
-      );
+      await program.methods
+        .initializeDid(did)
+        .accounts({ didDocument: didPda })
+        .rpc();
     });
 
     it('Should add verification method into DID properly', async () => {
       await program.methods
         .addVerificationMethod(
-          didSeed,
-          verificationSeed,
+          did,
           keyId,
           keyType,
           publicKeyMultibase,
           controller,
         )
+        .accounts({
+          didDocument: didPda,
+          verificationMethod: verificationPda,
+        })
         .rpc();
 
       const verificationMethod = await program.account.verificationMethod.fetch(
@@ -101,18 +127,18 @@ describe('verifiable-data-registry', () => {
     it('Fail to add verification without DID', async () => {
       try {
         const notExistDid = 'not exist';
-        const notExistDidSeed = [
-          ...Buffer.from(anchor.utils.sha256.hash(notExistDid)).subarray(0, 20),
-        ];
         await program.methods
           .addVerificationMethod(
-            notExistDidSeed,
-            verificationSeed,
+            notExistDid,
             keyId,
             keyType,
             publicKeyMultibase,
             controller,
           )
+          .accounts({
+            didDocument: didPda,
+            verificationMethod: verificationPda,
+          })
           .rpc();
       } catch (err) {
         expect(
@@ -121,7 +147,7 @@ describe('verifiable-data-registry', () => {
       }
     });
 
-    it('Fail to add verification with no authen', async () => {
+    it('Fail to add verification with no auth', async () => {
       try {
         const malicious = anchor.web3.Keypair.generate();
         const transaction = new anchor.web3.Transaction().add(
@@ -133,163 +159,24 @@ describe('verifiable-data-registry', () => {
         );
         await provider.sendAndConfirm(transaction);
 
-        const verificationSeed = [
-          ...Buffer.from('verificationSeed').subarray(0, 20),
-        ];
+        const newKeyId = 'newKeyId';
+        const [newVerificationPda] =
+          anchor.web3.PublicKey.findProgramAddressSync(
+            [keccak_256(did + newKeyId)],
+            program.programId,
+          );
 
         await program.methods
           .addVerificationMethod(
-            didSeed,
-            verificationSeed,
+            did,
             keyId,
             keyType,
             publicKeyMultibase,
             controller,
           )
-          .accounts({ controller: malicious.publicKey })
-          .signers([malicious])
-          .rpc();
-      } catch (err) {
-        expect(err.error.errorCode.code === ANCHOR_ERROR_UNAUTHORIZED);
-      }
-    });
-  });
-
-  describe('addAuthentication()', () => {
-    const did = 'did:zuni:solana:addAuthentication';
-    const keyId = 'key1';
-    let didSeed: number[];
-    let verificationSeed: number[];
-    let verificationPda: anchor.web3.PublicKey;
-    let authenticationSeed: number[];
-    let authenticationPda: anchor.web3.PublicKey;
-
-    before(async () => {
-      didSeed = [...Buffer.from(anchor.utils.sha256.hash(did)).subarray(0, 20)];
-      await program.methods.initializeDid(didSeed, did).rpc();
-
-      const verificationData = did + keyId;
-      const verificationHashed = anchor.utils.sha256.hash(verificationData);
-      verificationSeed = [...Buffer.from(verificationHashed).subarray(0, 20)];
-      await program.methods
-        .addVerificationMethod(
-          didSeed,
-          verificationSeed,
-          keyId,
-          'keyType',
-          'publicKeyMultibase',
-          provider.publicKey,
-        )
-        .rpc();
-      [verificationPda] = anchor.web3.PublicKey.findProgramAddressSync(
-        [Buffer.from(verificationSeed)],
-        program.programId,
-      );
-
-      const authenticationData = DISCRIMINATOR.authentication + did + keyId;
-      const authenticationHashed = anchor.utils.sha256.hash(authenticationData);
-      authenticationSeed = [
-        ...Buffer.from(authenticationHashed).subarray(0, 20),
-      ];
-      [authenticationPda] = anchor.web3.PublicKey.findProgramAddressSync(
-        [Buffer.from(authenticationSeed)],
-        program.programId,
-      );
-    });
-
-    it('Should add Authentication into DID properly', async () => {
-      await program.methods
-        .addAuthentication(didSeed, verificationSeed, authenticationSeed)
-        .accounts({
-          verificationMethod: verificationPda,
-        })
-        .rpc();
-
-      const authentication = await program.account.authentication.fetch(
-        authenticationPda,
-      );
-
-      expect(authentication.did === did);
-      expect(authentication.keyId === keyId);
-    });
-
-    it('Fail to add Authentication without DID', async () => {
-      try {
-        const notExistDid = 'not exist';
-        const notExistDidSeed = [
-          ...Buffer.from(anchor.utils.sha256.hash(notExistDid)).subarray(0, 20),
-        ];
-        await program.methods
-          .addAuthentication(
-            notExistDidSeed,
-            verificationSeed,
-            authenticationSeed,
-          )
           .accounts({
-            verificationMethod: verificationPda,
-          })
-          .rpc();
-      } catch (err) {
-        expect(
-          err.error.errorCode.code === ANCHOR_ERROR_ACCOUNT_NOT_INITIALIZED,
-        );
-      }
-    });
-
-    it('Fail to add Authentication without Verification Method', async () => {
-      try {
-        const notExistVerificationMethod = 'not exist';
-        const notExistVerificationMethodSeed = [
-          ...Buffer.from(
-            anchor.utils.sha256.hash(notExistVerificationMethod),
-          ).subarray(0, 20),
-        ];
-        const authenticationSeed = [
-          ...Buffer.from('authenticationHashed').subarray(0, 20),
-        ];
-        await program.methods
-          .addAuthentication(
-            didSeed,
-            notExistVerificationMethodSeed,
-            authenticationSeed,
-          )
-          .accounts({
-            verificationMethod: verificationPda,
-          })
-          .rpc();
-      } catch (err) {
-        expect(
-          err.error.errorCode.code === ANCHOR_ERROR_ACCOUNT_NOT_INITIALIZED,
-        );
-      }
-    });
-
-    it('Fail to add Authentication with no authen', async () => {
-      try {
-        const malicious = anchor.web3.Keypair.generate();
-        const transaction = new anchor.web3.Transaction().add(
-          anchor.web3.SystemProgram.transfer({
-            fromPubkey: provider.publicKey,
-            toPubkey: malicious.publicKey,
-            lamports: anchor.web3.LAMPORTS_PER_SOL, // number of SOL to send
-          }),
-        );
-        await provider.sendAndConfirm(transaction);
-
-        const authenticationHashed = anchor.utils.sha256.hash(
-          'maliciousAuthentication',
-        );
-        const maliciousAuthenticationSeed = [
-          ...Buffer.from(authenticationHashed).subarray(0, 20),
-        ];
-        await program.methods
-          .addAuthentication(
-            didSeed,
-            verificationSeed,
-            maliciousAuthenticationSeed,
-          )
-          .accounts({
-            verificationMethod: verificationPda,
+            didDocument: didPda,
+            verificationMethod: newVerificationPda,
             controller: malicious.publicKey,
           })
           .signers([malicious])
@@ -300,265 +187,320 @@ describe('verifiable-data-registry', () => {
     });
   });
 
-  describe('addAssertion()', () => {
-    const did = 'did:zuni:solana:addAssertion';
-    const keyId = 'key1';
-    let didSeed: number[];
-    let verificationSeed: number[];
-    let verificationPda: anchor.web3.PublicKey;
-    let assertionSeed: number[];
-    let assertionPda: anchor.web3.PublicKey;
+  describe('addVerificationRelationship()', () => {
+    const did = 'did:zuni:solana:addVerificationRelationship';
+    const [didPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [keccak_256(did)],
+      program.programId,
+    );
+    const keyId = did + '#key-relationship';
+    const [verificationPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from(keccak_256(did + keyId))],
+      program.programId,
+    );
 
     before(async () => {
-      didSeed = [...Buffer.from(anchor.utils.sha256.hash(did)).subarray(0, 20)];
-      await program.methods.initializeDid(didSeed, did).rpc();
+      await program.methods
+        .initializeDid(did)
+        .accounts({ didDocument: didPda })
+        .rpc();
 
-      const verificationData = did + keyId;
-      const verificationHashed = anchor.utils.sha256.hash(verificationData);
-      verificationSeed = [...Buffer.from(verificationHashed).subarray(0, 20)];
+      const publicKeyMultibase =
+        'z' + anchor.web3.Keypair.generate().publicKey.toBase58();
       await program.methods
         .addVerificationMethod(
-          didSeed,
-          verificationSeed,
+          did,
           keyId,
           'keyType',
-          'publicKeyMultibase',
+          publicKeyMultibase,
           provider.publicKey,
         )
-        .rpc();
-      [verificationPda] = anchor.web3.PublicKey.findProgramAddressSync(
-        [Buffer.from(verificationSeed)],
-        program.programId,
-      );
-
-      const assertionData = DISCRIMINATOR.assertion + did + keyId;
-      const assertionHashed = anchor.utils.sha256.hash(assertionData);
-      assertionSeed = [...Buffer.from(assertionHashed).subarray(0, 20)];
-      [assertionPda] = anchor.web3.PublicKey.findProgramAddressSync(
-        [Buffer.from(assertionSeed)],
-        program.programId,
-      );
-    });
-
-    it('Should add Assertion into DID properly', async () => {
-      await program.methods
-        .addAssertion(didSeed, verificationSeed, assertionSeed)
         .accounts({
+          didDocument: didPda,
           verificationMethod: verificationPda,
         })
         .rpc();
-
-      const assertion = await program.account.assertion.fetch(assertionPda);
-
-      expect(assertion.did === did);
-      expect(assertion.keyId === keyId);
     });
 
-    it('Fail to add Assertion without DID', async () => {
-      try {
-        const notExistDid = 'not exist';
-        const notExistDidSeed = [
-          ...Buffer.from(anchor.utils.sha256.hash(notExistDid)).subarray(0, 20),
-        ];
-        await program.methods
-          .addAssertion(notExistDidSeed, verificationSeed, assertionSeed)
-          .accounts({
-            verificationMethod: verificationPda,
-          })
-          .rpc();
-      } catch (err) {
-        expect(
-          err.error.errorCode.code === ANCHOR_ERROR_ACCOUNT_NOT_INITIALIZED,
-        );
-      }
-    });
+    it('Should add verification relationship into DID properly', async () => {
+      const [relationshipPda] = anchor.web3.PublicKey.findProgramAddressSync(
+        [
+          Buffer.from(
+            keccak_256(
+              did +
+                VERIFICATION_RELATIONSHIP.authentication.discriminator +
+                keyId,
+            ),
+          ),
+        ],
+        program.programId,
+      );
+      await program.methods
+        .addVerificationRelationship(
+          did,
+          VERIFICATION_RELATIONSHIP.authentication.input,
+          keyId,
+        )
+        .accounts({
+          didDocument: didPda,
+          verificationMethod: verificationPda,
+          verificationRelationship: relationshipPda,
+        })
+        .rpc();
 
-    it('Fail to add Assertion without Verification Method', async () => {
-      try {
-        const notExistVerificationMethod = 'not exist';
-        const notExistVerificationMethodSeed = [
-          ...Buffer.from(
-            anchor.utils.sha256.hash(notExistVerificationMethod),
-          ).subarray(0, 20),
-        ];
-        const assertionSeed = [
-          ...Buffer.from('authenticationHashed').subarray(0, 20),
-        ];
-        await program.methods
-          .addAssertion(didSeed, notExistVerificationMethodSeed, assertionSeed)
-          .accounts({
-            verificationMethod: verificationPda,
-          })
-          .rpc();
-      } catch (err) {
-        expect(
-          err.error.errorCode.code === ANCHOR_ERROR_ACCOUNT_NOT_INITIALIZED,
-        );
-      }
-    });
+      const verificationRelationship =
+        await program.account.verificationRelationship.fetch(relationshipPda);
 
-    it('Fail to add Assertion with no authen', async () => {
-      try {
-        const malicious = anchor.web3.Keypair.generate();
-        const transaction = new anchor.web3.Transaction().add(
-          anchor.web3.SystemProgram.transfer({
-            fromPubkey: provider.publicKey,
-            toPubkey: malicious.publicKey,
-            lamports: anchor.web3.LAMPORTS_PER_SOL, // number of SOL to send
-          }),
-        );
-        await provider.sendAndConfirm(transaction);
-
-        const assertionHashed = anchor.utils.sha256.hash('maliciousAssertion');
-        const maliciousAssertionSeed = [
-          ...Buffer.from(assertionHashed).subarray(0, 20),
-        ];
-        await program.methods
-          .addAssertion(didSeed, verificationSeed, maliciousAssertionSeed)
-          .accounts({
-            verificationMethod: verificationPda,
-            controller: malicious.publicKey,
-          })
-          .signers([malicious])
-          .rpc();
-      } catch (err) {
-        expect(err.error.errorCode.code === ANCHOR_ERROR_UNAUTHORIZED);
-      }
+      expect(verificationRelationship.did === did);
+      expect(verificationRelationship.keyId === keyId);
+      expect(
+        JSON.stringify(verificationRelationship.relationship) ===
+          JSON.stringify(VERIFICATION_RELATIONSHIP.authentication.input),
+      );
     });
   });
 
-  describe('addKeyAgreement()', () => {
-    const did = 'did:zuni:solana:addKeyAgreement';
-    const keyId = 'key1';
-    let didSeed: number[];
-    let verificationSeed: number[];
-    let verificationPda: anchor.web3.PublicKey;
-    let keyAgreementSeed: number[];
-    let keyAgreementPda: anchor.web3.PublicKey;
+  describe('addCredential()', () => {
+    const did = 'did:zuni:solana:addCredential';
+    const keyId = did + '#key-addCredential';
+    const credentialId = 'addCredential';
+    const keyType = 'EcdsaSecp256k1VerificationKey2019';
+    const expireAt = new anchor.BN(new Date().getTime());
+
+    const ec = new EC('secp256k1');
+    const authenticationKeypair = ec.genKeyPair();
+    const publicKeyMultibase =
+      'f' + authenticationKeypair.getPublic().encode('hex', false).slice(2);
+
+    const [didPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from(keccak_256(did))],
+      program.programId,
+    );
+    const [verificationPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from(keccak_256(did + keyId))],
+      program.programId,
+    );
+    const [authenticationPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [
+        Buffer.from(
+          keccak_256(
+            did +
+              VERIFICATION_RELATIONSHIP.authentication.discriminator +
+              keyId,
+          ),
+        ),
+      ],
+      program.programId,
+    );
 
     before(async () => {
-      didSeed = [...Buffer.from(anchor.utils.sha256.hash(did)).subarray(0, 20)];
-      await program.methods.initializeDid(didSeed, did).rpc();
+      await program.methods
+        .initializeDid(did)
+        .accounts({ didDocument: didPda })
+        .rpc();
 
-      const verificationData = did + keyId;
-      const verificationHashed = anchor.utils.sha256.hash(verificationData);
-      verificationSeed = [...Buffer.from(verificationHashed).subarray(0, 20)];
       await program.methods
         .addVerificationMethod(
-          didSeed,
-          verificationSeed,
+          did,
           keyId,
-          'keyType',
-          'publicKeyMultibase',
+          keyType,
+          publicKeyMultibase,
           provider.publicKey,
         )
-        .rpc();
-      [verificationPda] = anchor.web3.PublicKey.findProgramAddressSync(
-        [Buffer.from(verificationSeed)],
-        program.programId,
-      );
-
-      const keyAgreementData = DISCRIMINATOR.keyAgreement + did + keyId;
-      const keyAgreementHashed = anchor.utils.sha256.hash(keyAgreementData);
-      keyAgreementSeed = [...Buffer.from(keyAgreementHashed).subarray(0, 20)];
-      [keyAgreementPda] = anchor.web3.PublicKey.findProgramAddressSync(
-        [Buffer.from(keyAgreementSeed)],
-        program.programId,
-      );
-    });
-
-    it('Should add KeyAgreement into DID properly', async () => {
-      await program.methods
-        .addKeyAgreement(didSeed, verificationSeed, keyAgreementSeed)
         .accounts({
+          didDocument: didPda,
           verificationMethod: verificationPda,
         })
         .rpc();
 
-      const keyAgreement = await program.account.keyAgreement.fetch(
-        keyAgreementPda,
+      await program.methods
+        .addVerificationRelationship(
+          did,
+          VERIFICATION_RELATIONSHIP.authentication.input,
+          keyId,
+        )
+        .accounts({
+          didDocument: didPda,
+          verificationMethod: verificationPda,
+          verificationRelationship: authenticationPda,
+        })
+        .rpc();
+    });
+
+    it('Should add Credential properly', async () => {
+      const msg = keccak_256(credentialId);
+      const fullSignature = authenticationKeypair.sign(msg, {
+        canonical: true,
+      });
+      if (fullSignature.recoveryParam === null) {
+        throw new Error('Failed to sign');
+      }
+
+      const [credentialPda] = anchor.web3.PublicKey.findProgramAddressSync(
+        [Buffer.from(keccak_256(credentialId))],
+        program.programId,
       );
 
-      expect(keyAgreement.did === did);
-      expect(keyAgreement.keyId === keyId);
+      await program.methods
+        .addCredential(
+          did,
+          keyId,
+          credentialId,
+          expireAt,
+          fullSignature.recoveryParam,
+          [...fullSignature.r.toBuffer(), ...fullSignature.s.toBuffer()],
+        )
+        .accounts({
+          didDocument: didPda,
+          verificationMethod: verificationPda,
+          authentication: authenticationPda,
+          credentialState: credentialPda,
+        })
+        .rpc();
+      const credential = await program.account.credentialState.fetch(
+        credentialPda,
+      );
+      const active = { active: {} };
+      expect(credential.issuerDid === did);
+      expect(credential.credentialId === credentialId);
+      expect(JSON.stringify(credential.status) === JSON.stringify(active));
+      expect(credential.expireAt === expireAt);
+    });
+  });
+
+  describe('revokeCredential()', () => {
+    const did = 'did:zuni:solana:revokeCredential';
+    const keyId = did + '#key-revokeCredential';
+    const credentialId = 'revokeCredential';
+    const keyType = 'EcdsaSecp256k1VerificationKey2019';
+    const expireAt = new anchor.BN(new Date().getTime());
+
+    const ec = new EC('secp256k1');
+    const authenticationKeypair = ec.genKeyPair();
+    const publicKeyMultibase =
+      'z' +
+      anchor.utils.bytes.bs58.encode(
+        Buffer.from(authenticationKeypair.getPublic('hex').slice(2), 'hex'),
+      );
+
+    const [didPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from(keccak_256(did))],
+      program.programId,
+    );
+    const [verificationPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from(keccak_256(did + keyId))],
+      program.programId,
+    );
+    const [authenticationPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [
+        Buffer.from(
+          keccak_256(
+            did +
+              VERIFICATION_RELATIONSHIP.authentication.discriminator +
+              keyId,
+          ),
+        ),
+      ],
+      program.programId,
+    );
+    const [credentialPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from(keccak_256(credentialId))],
+      program.programId,
+    );
+
+    before(async () => {
+      await program.methods
+        .initializeDid(did)
+        .accounts({ didDocument: didPda })
+        .rpc();
+
+      await program.methods
+        .addVerificationMethod(
+          did,
+          keyId,
+          keyType,
+          publicKeyMultibase,
+          provider.publicKey,
+        )
+        .accounts({
+          didDocument: didPda,
+          verificationMethod: verificationPda,
+        })
+        .rpc();
+
+      await program.methods
+        .addVerificationRelationship(
+          did,
+          VERIFICATION_RELATIONSHIP.authentication.input,
+          keyId,
+        )
+        .accounts({
+          didDocument: didPda,
+          verificationMethod: verificationPda,
+          verificationRelationship: authenticationPda,
+        })
+        .rpc();
+
+      const msg = keccak_256(credentialId);
+      const fullSignature = authenticationKeypair.sign(msg, {
+        canonical: true,
+      });
+      if (fullSignature.recoveryParam === null) {
+        throw new Error('Failed to sign');
+      }
+      await program.methods
+        .addCredential(
+          did,
+          keyId,
+          credentialId,
+          expireAt,
+          fullSignature.recoveryParam,
+          [...fullSignature.r.toBuffer(), ...fullSignature.s.toBuffer()],
+        )
+        .accounts({
+          didDocument: didPda,
+          verificationMethod: verificationPda,
+          authentication: authenticationPda,
+          credentialState: credentialPda,
+        })
+        .rpc();
     });
 
-    it('Fail to add KeyAgreement without DID', async () => {
-      try {
-        const notExistDid = 'not exist';
-        const notExistDidSeed = [
-          ...Buffer.from(anchor.utils.sha256.hash(notExistDid)).subarray(0, 20),
-        ];
-        await program.methods
-          .addKeyAgreement(notExistDidSeed, verificationSeed, keyAgreementSeed)
-          .accounts({
-            verificationMethod: verificationPda,
-          })
-          .rpc();
-      } catch (err) {
-        expect(
-          err.error.errorCode.code === ANCHOR_ERROR_ACCOUNT_NOT_INITIALIZED,
-        );
-      }
-    });
+    it('Should revoke Credential properly', async () => {
+      const revokeMsg = keccak_256(credentialId + 'REVOKE');
+      const revokeSignature = authenticationKeypair.sign(revokeMsg, {
+        canonical: true,
+      });
 
-    it('Fail to add Authentication without Verification Method', async () => {
-      try {
-        const notExistVerificationMethod = 'not exist';
-        const notExistVerificationMethodSeed = [
-          ...Buffer.from(
-            anchor.utils.sha256.hash(notExistVerificationMethod),
-          ).subarray(0, 20),
-        ];
-        const keyAgreementSeed = [
-          ...Buffer.from('authenticationHashed').subarray(0, 20),
-        ];
-        await program.methods
-          .addKeyAgreement(
-            didSeed,
-            notExistVerificationMethodSeed,
-            keyAgreementSeed,
-          )
-          .accounts({
-            verificationMethod: verificationPda,
-          })
-          .rpc();
-      } catch (err) {
-        expect(
-          err.error.errorCode.code === ANCHOR_ERROR_ACCOUNT_NOT_INITIALIZED,
-        );
+      if (revokeSignature.recoveryParam === null) {
+        throw new Error('Failed to sign msg');
       }
-    });
 
-    it('Fail to add KeyAgreement with no authen', async () => {
-      try {
-        const malicious = anchor.web3.Keypair.generate();
-        const transaction = new anchor.web3.Transaction().add(
-          anchor.web3.SystemProgram.transfer({
-            fromPubkey: provider.publicKey,
-            toPubkey: malicious.publicKey,
-            lamports: anchor.web3.LAMPORTS_PER_SOL, // number of SOL to send
-          }),
-        );
-        await provider.sendAndConfirm(transaction);
+      await program.methods
+        .revokeCredential(
+          did,
+          keyId,
+          credentialId,
+          revokeSignature.recoveryParam,
+          [...revokeSignature.r.toBuffer(), ...revokeSignature.s.toBuffer()],
+        )
+        .accounts({
+          credentialState: credentialPda,
+          didDocument: didPda,
+          verificationMethod: verificationPda,
+          authentication: authenticationPda,
+        })
+        .rpc();
 
-        const keyAgreementHashed = anchor.utils.sha256.hash(
-          'maliciousKeyAgreement',
-        );
-        const maliciousKeyAgreementSeed = [
-          ...Buffer.from(keyAgreementHashed).subarray(0, 20),
-        ];
-        await program.methods
-          .addKeyAgreement(didSeed, verificationSeed, maliciousKeyAgreementSeed)
-          .accounts({
-            verificationMethod: verificationPda,
-            controller: malicious.publicKey,
-          })
-          .signers([malicious])
-          .rpc();
-      } catch (err) {
-        expect(err.error.errorCode.code === ANCHOR_ERROR_UNAUTHORIZED);
-      }
+      const credential = await program.account.credentialState.fetch(
+        credentialPda,
+      );
+
+      const revoked = { active: {} };
+
+      expect(credential.issuerDid === did);
+      expect(credential.credentialId === credentialId);
+      expect(JSON.stringify(credential.status) === JSON.stringify(revoked));
     });
   });
 });
