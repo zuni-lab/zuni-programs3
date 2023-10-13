@@ -25,7 +25,7 @@ export const findVerificationPdasWithKeyIds = (
   did: string,
   keyIds: string[],
 ) => {
-  let verificationPdas: web3.PublicKey[] = [];
+  const verificationPdas: web3.PublicKey[] = [];
   for (const keyId of keyIds) {
     const [verificationPda] = web3.PublicKey.findProgramAddressSync(
       [Buffer.from(keccak_256(did + keyId))],
