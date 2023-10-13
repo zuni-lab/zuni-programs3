@@ -3,7 +3,7 @@ seeds = true
 skip-lint = false
 [programs.localnet]
 # private-voting = "8SmFN6YA4VBf3SKtYeB9oDcffdbukRKakBp5JYcnqtEc"
-verifiable-data-registry = "DaSnbN9itw4MSTaw2ZMa6h72cgazzSmBBFYb7PtvpYow"
+verifiable-data-registry = "Vc3VmF38ZyWdBxbQgFKAGHWoZeaFDSemgLLicFU4q9R"
 
 [registry]
 url = "https://api.apr.dev"
