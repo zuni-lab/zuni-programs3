@@ -7,7 +7,7 @@ mod state;
 use instructions::*;
 use state::*;
 
-declare_id!("DaSnbN9itw4MSTaw2ZMa6h72cgazzSmBBFYb7PtvpYow");
+declare_id!("Vc3VmF38ZyWdBxbQgFKAGHWoZeaFDSemgLLicFU4q9R");
 
 #[program]
 pub mod verifiable_data_registry {
