@@ -1,9 +1,9 @@
 import { assert } from 'chai';
-import { BabyJubCurvePoint } from 'library/BabyJub/BabyJubBasePoint';
-import { FFMathUtility } from 'library/BabyJub/FFMathUtility';
-import { ECCCurvePoint } from 'library/interfaces/BasePoint';
-import { Secp256k1CurvePoint } from 'library/Secp256k1/Secp256k1BasePoint';
-import { ECCUtility } from 'library/utility/ECCUtility';
+import { BabyJubCurvePoint } from '../BabyJub/BabyJubBasePoint';
+import { FFMathUtility } from '../BabyJub/FFMathUtility';
+import { ECCCurvePoint } from '../interfaces/BasePoint';
+import { Secp256k1CurvePoint } from '../Secp256k1/Secp256k1BasePoint';
+import { ECCUtility } from '../utility/ECCUtility';
 
 describe('ECCUtility lib', function () {
   this.timeout(100000);

@@ -11,12 +11,12 @@ import {
   MAX_NUMBER_OF_VOTERS,
   MAX_NUMBER_OF_VOTE_OPTIONS,
   SMT_LEVEL,
-} from 'library/constants/VotingConstants';
-import { BaseClassValidator } from 'library/interfaces/BaseClassValidator';
-import { ECCCurvePoint } from 'library/interfaces/BasePoint';
-import { CastVoteInput } from 'library/interfaces/CastVoteInput';
-import { ECCKeyStringPair } from 'library/interfaces/ECCKeyStringPair';
-import { ECCPublicKeyInterface } from 'library/interfaces/ECCPublicKey';
+} from '../constants/VotingConstants';
+import { BaseClassValidator } from '../interfaces/BaseClassValidator';
+import { ECCCurvePoint } from '../interfaces/BasePoint';
+import { CastVoteInput } from '../interfaces/CastVoteInput';
+import { ECCKeyStringPair } from '../interfaces/ECCKeyStringPair';
+import { ECCPublicKeyInterface } from '../interfaces/ECCPublicKey';
 import { VotingOptionChange } from './VotingOptionChange';
 
 export class VotingTicket<P extends ECCCurvePoint> extends BaseClassValidator<

@@ -1,7 +1,7 @@
 import BN from 'bn.js';
 import { Point } from 'circomlibjs';
 import { ec as BabyJubCurveInterface } from 'elliptic';
-import { BasePoint } from 'library/interfaces/BasePoint';
+import { BasePoint } from '../interfaces/BasePoint';
 import { FFMathUtility } from './FFMathUtility';
 type BabyJubCurvePoint = Point;
 export { BabyJubCurveInterface, BabyJubCurvePoint };

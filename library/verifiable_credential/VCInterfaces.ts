@@ -14,20 +14,20 @@ import {
   MinLength,
   Validate,
 } from 'class-validator';
-import { FFMathUtility } from 'library/BabyJub/FFMathUtility';
+import { CircuitSignals, PublicSignals } from 'snarkjs';
+import { FFMathUtility } from '../BabyJub/FFMathUtility';
 import {
   MAX_CHECK_SIZE,
   MAX_VALUE_CHUNK,
   VC_SMT_LEVEL,
-} from 'library/constants/VCConstants';
-import { BaseClassValidator } from 'library/interfaces/BaseClassValidator';
-import { ECCCurvePoint } from 'library/interfaces/BasePoint';
-import { ECCPrivateKeyInterface } from 'library/interfaces/ECCPrivateKey';
-import { InterfaceWithoutMethodsOf } from 'library/interfaces/InterfaceWithoutMethodsOf';
-import { IsHexadecimalWithoutPrefix } from 'library/interfaces/IsHexadecimalWithoutPrefix';
-import { ZKProof } from 'library/interfaces/ZKEngine';
-import { ECCUtility } from 'library/utility/ECCUtility';
-import { CircuitSignals, PublicSignals } from 'snarkjs';
+} from '../constants/VCConstants';
+import { BaseClassValidator } from '../interfaces/BaseClassValidator';
+import { ECCCurvePoint } from '../interfaces/BasePoint';
+import { ECCPrivateKeyInterface } from '../interfaces/ECCPrivateKey';
+import { InterfaceWithoutMethodsOf } from '../interfaces/InterfaceWithoutMethodsOf';
+import { IsHexadecimalWithoutPrefix } from '../interfaces/IsHexadecimalWithoutPrefix';
+import { ZKProof } from '../interfaces/ZKEngine';
+import { ECCUtility } from '../utility/ECCUtility';
 
 export enum ProofPurpose {
   ASSERTION = 'ASSERTION',

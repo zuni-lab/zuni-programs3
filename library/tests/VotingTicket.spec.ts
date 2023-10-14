@@ -1,17 +1,17 @@
 import { BN } from 'bn.js';
 import { assert } from 'chai';
-import { BabyJubCurvePoint } from 'library/BabyJub/BabyJubBasePoint';
-import { FFMathUtility } from 'library/BabyJub/FFMathUtility';
+import { BabyJubCurvePoint } from '../BabyJub/BabyJubBasePoint';
+import { FFMathUtility } from '../BabyJub/FFMathUtility';
 import {
   MAX_NUMBER_OF_VOTE_OPTIONS,
   SMT_LEVEL,
-} from 'library/constants/VotingConstants';
-import { ClassPropertyValidationError } from 'library/interfaces/BaseClassValidator';
-import { ECCCurvePoint } from 'library/interfaces/BasePoint';
-import { VotingOptionChange } from 'library/private_voting/VotingOptionChange';
-import { VotingTicket } from 'library/private_voting/VotingTicket';
-import { Secp256k1CurvePoint } from 'library/Secp256k1/Secp256k1BasePoint';
-import { ECCUtility } from 'library/utility/ECCUtility';
+} from '../constants/VotingConstants';
+import { ClassPropertyValidationError } from '../interfaces/BaseClassValidator';
+import { ECCCurvePoint } from '../interfaces/BasePoint';
+import { VotingOptionChange } from '../private_voting/VotingOptionChange';
+import { VotingTicket } from '../private_voting/VotingTicket';
+import { Secp256k1CurvePoint } from '../Secp256k1/Secp256k1BasePoint';
+import { ECCUtility } from '../utility/ECCUtility';
 
 describe('VotingTicket class tests', function () {
   this.timeout(10000);

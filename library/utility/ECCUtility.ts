@@ -1,20 +1,19 @@
-import { BabyJubBasePoint } from 'library/BabyJub/BabyJubBasePoint';
-import { BabyJubKeyStringPair } from 'library/BabyJub/BabyJubKeyStringPair';
-import { BabyJubPrivateKey } from 'library/BabyJub/BabyJubPrivateKey';
-import { BabyJubPublicKey } from 'library/BabyJub/BabyJubPublicKey';
-import { BabyJubUtility } from 'library/BabyJub/BabyJubUtility';
-import { FFMathUtility } from 'library/BabyJub/FFMathUtility';
-import { ECCCurvePoint } from 'library/interfaces/BasePoint';
-import { InvalidContextError } from 'library/interfaces/InvalidContextError';
-import { Secp256k1BasePoint } from 'library/Secp256k1/Secp256k1BasePoint';
-import { Secp256k1KeyStringPair } from 'library/Secp256k1/Secp256k1KeyStringPair';
-import { Secp256k1PrivateKey } from 'library/Secp256k1/Secp256k1PrivateKey';
-import { Secp256k1PublicKey } from 'library/Secp256k1/Secp256k1PublicKey';
-import { Secp256k1Utility } from 'library/Secp256k1/Secp256k1Utility';
-import { BasePoint } from '../interfaces/BasePoint';
+import { BabyJubBasePoint } from '../BabyJub/BabyJubBasePoint';
+import { BabyJubKeyStringPair } from '../BabyJub/BabyJubKeyStringPair';
+import { BabyJubPrivateKey } from '../BabyJub/BabyJubPrivateKey';
+import { BabyJubPublicKey } from '../BabyJub/BabyJubPublicKey';
+import { BabyJubUtility } from '../BabyJub/BabyJubUtility';
+import { FFMathUtility } from '../BabyJub/FFMathUtility';
+import { BasePoint, ECCCurvePoint } from '../interfaces/BasePoint';
 import { ECCKeyStringPair } from '../interfaces/ECCKeyStringPair';
 import { ECCPrivateKeyInterface } from '../interfaces/ECCPrivateKey';
 import { ECCPublicKeyInterface } from '../interfaces/ECCPublicKey';
+import { InvalidContextError } from '../interfaces/InvalidContextError';
+import { Secp256k1BasePoint } from '../Secp256k1/Secp256k1BasePoint';
+import { Secp256k1KeyStringPair } from '../Secp256k1/Secp256k1KeyStringPair';
+import { Secp256k1PrivateKey } from '../Secp256k1/Secp256k1PrivateKey';
+import { Secp256k1PublicKey } from '../Secp256k1/Secp256k1PublicKey';
+import { Secp256k1Utility } from '../Secp256k1/Secp256k1Utility';
 import { CurvePointBasedUtility } from './CurvePointBasedUtility';
 
 export class ECCUtility extends CurvePointBasedUtility {

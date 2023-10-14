@@ -1,16 +1,16 @@
 import { assert } from 'chai';
 import * as fs from 'fs';
-import { BabyJubCurvePoint } from 'library/BabyJub/BabyJubBasePoint';
-import { FFMathUtility } from 'library/BabyJub/FFMathUtility';
-import { MAX_NUMBER_OF_VOTE_OPTIONS } from 'library/constants/VotingConstants';
-import { ECCCurvePoint } from 'library/interfaces/BasePoint';
-import { ZKEngine, ZKProof } from 'library/interfaces/ZKEngine';
-import { VotingPowerSMTBuilder } from 'library/private_voting/VotingPowerSMTBuilder';
-import { VotingTicketBuilder } from 'library/private_voting/VotingTicketBuilder';
-import { ECCUtility } from 'library/utility/ECCUtility';
-import { VotingUtility } from 'library/utility/VotingUtility';
 import seedrandom from 'seedrandom';
 import * as snarkjs from 'snarkjs';
+import { BabyJubCurvePoint } from '../BabyJub/BabyJubBasePoint';
+import { FFMathUtility } from '../BabyJub/FFMathUtility';
+import { MAX_NUMBER_OF_VOTE_OPTIONS } from '../constants/VotingConstants';
+import { ECCCurvePoint } from '../interfaces/BasePoint';
+import { ZKEngine, ZKProof } from '../interfaces/ZKEngine';
+import { VotingPowerSMTBuilder } from '../private_voting/VotingPowerSMTBuilder';
+import { VotingTicketBuilder } from '../private_voting/VotingTicketBuilder';
+import { ECCUtility } from '../utility/ECCUtility';
+import { VotingUtility } from '../utility/VotingUtility';
 type Groth16Proof = snarkjs.Groth16Proof;
 
 describe('PrivateVoting tests', function () {

@@ -1,7 +1,7 @@
-import { BaseClassValidator } from 'library/interfaces/BaseClassValidator';
-import { ECCKeyStringPair } from 'library/interfaces/ECCKeyStringPair';
-import { ECCPrivateKeyInterface } from 'library/interfaces/ECCPrivateKey';
-import { ECCPublicKeyInterface } from 'library/interfaces/ECCPublicKey';
+import { BaseClassValidator } from '../interfaces/BaseClassValidator';
+import { ECCKeyStringPair } from '../interfaces/ECCKeyStringPair';
+import { ECCPrivateKeyInterface } from '../interfaces/ECCPrivateKey';
+import { ECCPublicKeyInterface } from '../interfaces/ECCPublicKey';
 import { BabyJubCurvePoint } from './BabyJubBasePoint';
 import { BabyJubPrivateKey } from './BabyJubPrivateKey';
 import { BabyJubPublicKey } from './BabyJubPublicKey';

@@ -1,9 +1,9 @@
 import { BN } from 'bn.js';
 import { assert } from 'chai';
 import { Point } from 'circomlibjs';
-import { BabyJubCurvePoint } from 'library/BabyJub/BabyJubBasePoint';
-import { FFMathUtility } from 'library/BabyJub/FFMathUtility';
-import { ECCCurvePoint } from 'library/interfaces/BasePoint';
+import { BabyJubCurvePoint } from '../../BabyJub/BabyJubBasePoint';
+import { FFMathUtility } from '../../BabyJub/FFMathUtility';
+import { ECCCurvePoint } from '../../interfaces/BasePoint';
 
 describe('BabyJubKeyStringPair class tests', function () {
   before(async () => {

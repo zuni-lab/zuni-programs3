@@ -1,13 +1,13 @@
 import { assert } from 'chai';
-import { BabyJubCurvePoint } from 'library/BabyJub/BabyJubBasePoint';
-import { FFMathUtility } from 'library/BabyJub/FFMathUtility';
-import { MAX_NUMBER_OF_VOTE_OPTIONS } from 'library/constants/VotingConstants';
-import { ECCCurvePoint } from 'library/interfaces/BasePoint';
-import { VotingPowerSMTBuilder } from 'library/private_voting/VotingPowerSMTBuilder';
-import { VotingTicketBuilder } from 'library/private_voting/VotingTicketBuilder';
-import { Secp256k1CurvePoint } from 'library/Secp256k1/Secp256k1BasePoint';
-import { ECCUtility } from 'library/utility/ECCUtility';
-import { VotingUtility } from 'library/utility/VotingUtility';
+import { BabyJubCurvePoint } from '../BabyJub/BabyJubBasePoint';
+import { FFMathUtility } from '../BabyJub/FFMathUtility';
+import { MAX_NUMBER_OF_VOTE_OPTIONS } from '../constants/VotingConstants';
+import { ECCCurvePoint } from '../interfaces/BasePoint';
+import { VotingPowerSMTBuilder } from '../private_voting/VotingPowerSMTBuilder';
+import { VotingTicketBuilder } from '../private_voting/VotingTicketBuilder';
+import { Secp256k1CurvePoint } from '../Secp256k1/Secp256k1BasePoint';
+import { ECCUtility } from '../utility/ECCUtility';
+import { VotingUtility } from '../utility/VotingUtility';
 
 describe('VotingTicketBuilder tests', function () {
   this.timeout(10000);

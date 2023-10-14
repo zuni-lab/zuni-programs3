@@ -4,9 +4,9 @@ import { IsInt, Max, Min } from 'class-validator';
 import {
   MAX_TOTAL_VOTING_POWER,
   SMT_LEVEL,
-} from 'library/constants/VotingConstants';
-import { BaseClassValidator } from 'library/interfaces/BaseClassValidator';
-import { ECCCurvePoint } from 'library/interfaces/BasePoint';
+} from '../constants/VotingConstants';
+import { BaseClassValidator } from '../interfaces/BaseClassValidator';
+import { ECCCurvePoint } from '../interfaces/BasePoint';
 import { WasmField1Interface } from '../interfaces/WasmFieldInterface';
 import { IndividualVotingPower } from './IndividualVotingPower';
 export class VotingPowerSMT<P extends ECCCurvePoint> extends BaseClassValidator<

@@ -1,10 +1,10 @@
 import BN from 'bn.js';
 import { IsInt, Max, Min } from 'class-validator';
-import { MAX_NUMBER_OF_VOTE_OPTIONS } from 'library/constants/VotingConstants';
-import { BaseClassValidator } from 'library/interfaces/BaseClassValidator';
-import { BasePoint, ECCCurvePoint } from 'library/interfaces/BasePoint';
-import { ECCPublicKeyInterface } from 'library/interfaces/ECCPublicKey';
-import { ECCUtility } from 'library/utility/ECCUtility';
+import { MAX_NUMBER_OF_VOTE_OPTIONS } from '../constants/VotingConstants';
+import { BaseClassValidator } from '../interfaces/BaseClassValidator';
+import { BasePoint, ECCCurvePoint } from '../interfaces/BasePoint';
+import { ECCPublicKeyInterface } from '../interfaces/ECCPublicKey';
+import { ECCUtility } from '../utility/ECCUtility';
 
 export class VotingOptionChange<
   P extends ECCCurvePoint,

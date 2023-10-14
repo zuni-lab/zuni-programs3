@@ -1,8 +1,8 @@
 import { IsInt, Max, Min } from 'class-validator';
-import { MAX_TOTAL_VOTING_POWER } from 'library/constants/VotingConstants';
-import { BaseClassValidator } from 'library/interfaces/BaseClassValidator';
-import { ECCCurvePoint } from 'library/interfaces/BasePoint';
-import { ECCPublicKeyInterface } from 'library/interfaces/ECCPublicKey';
+import { MAX_TOTAL_VOTING_POWER } from '../constants/VotingConstants';
+import { BaseClassValidator } from '../interfaces/BaseClassValidator';
+import { ECCCurvePoint } from '../interfaces/BasePoint';
+import { ECCPublicKeyInterface } from '../interfaces/ECCPublicKey';
 
 export class IndividualVotingPower<
   P extends ECCCurvePoint,

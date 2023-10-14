@@ -1,5 +1,5 @@
 import BN from 'bn.js';
-import { MAX_NUM_BITS_OF_RANDOMNESS } from 'library/constants/VotingConstants';
+import { MAX_NUM_BITS_OF_RANDOMNESS } from '../constants/VotingConstants';
 
 export function generateRandomBN(): BN {
   const BN253 = new BN(1).shln(MAX_NUM_BITS_OF_RANDOMNESS);

@@ -6,9 +6,9 @@ import {
   SMTMemDb,
 } from 'circomlibjs';
 import { getCurveFromName } from 'ffjavascript';
-import { ECCCurvePoint } from 'library/interfaces/BasePoint';
-import { WasmField1Interface } from 'library/interfaces/WasmFieldInterface';
 import { SMT_LEVEL } from '../constants/VotingConstants';
+import { ECCCurvePoint } from '../interfaces/BasePoint';
+import { WasmField1Interface } from '../interfaces/WasmFieldInterface';
 import { IndividualVotingPower } from './IndividualVotingPower';
 import { VotingPowerSMT } from './VotingPowerSMT';
 

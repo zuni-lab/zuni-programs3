@@ -1,10 +1,10 @@
 import BN from 'bn.js';
 import { assert } from 'chai';
-import { generateRandomBN } from 'library/common/Math';
-import { ECCCurvePoint } from 'library/interfaces/BasePoint';
-import { ECCKeyStringPair } from 'library/interfaces/ECCKeyStringPair';
-import { ECCPublicKeyInterface } from 'library/interfaces/ECCPublicKey';
+import { generateRandomBN } from '../common/Math';
 import { MAX_TOTAL_VOTING_POWER } from '../constants/VotingConstants';
+import { ECCCurvePoint } from '../interfaces/BasePoint';
+import { ECCKeyStringPair } from '../interfaces/ECCKeyStringPair';
+import { ECCPublicKeyInterface } from '../interfaces/ECCPublicKey';
 import { VotingOptionChange } from './VotingOptionChange';
 import { VotingPowerSMT } from './VotingPowerSMT';
 import { VotingTicket } from './VotingTicket';

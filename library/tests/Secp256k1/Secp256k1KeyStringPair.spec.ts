@@ -1,9 +1,9 @@
 import { assert } from 'chai';
-import { ClassPropertyValidationError } from 'library/interfaces/BaseClassValidator';
-import { ECCCurvePoint } from 'library/interfaces/BasePoint';
-import { ECCKeyStringPair } from 'library/interfaces/ECCKeyStringPair';
-import { Secp256k1CurvePoint } from 'library/Secp256k1/Secp256k1BasePoint';
-import { ECCUtility } from 'library/utility/ECCUtility';
+import { ClassPropertyValidationError } from '../../interfaces/BaseClassValidator';
+import { ECCCurvePoint } from '../../interfaces/BasePoint';
+import { ECCKeyStringPair } from '../../interfaces/ECCKeyStringPair';
+import { Secp256k1CurvePoint } from '../../Secp256k1/Secp256k1BasePoint';
+import { ECCUtility } from '../../utility/ECCUtility';
 
 describe('Secp256k1KeyStringPair class tests', function () {
   it('create new key string pair objects', () => {

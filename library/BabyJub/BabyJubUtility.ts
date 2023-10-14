@@ -1,7 +1,7 @@
 import { ModeOfOperation, utils as AESUtils } from 'aes-js';
 import { BN } from 'bn.js';
 import { SHA256 } from 'crypto-js';
-import { generateRandomBN } from 'library/common/Math';
+import { generateRandomBN } from '../common/Math';
 import { DEFAULT_BABYJUB_PRIVATE_KEY_STRING } from '../constants/VotingConstants';
 import { BabyJubBasePoint } from './BabyJubBasePoint';
 import { BabyJubKeyStringPair } from './BabyJubKeyStringPair';

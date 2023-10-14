@@ -1,10 +1,10 @@
 import BN from 'bn.js';
 import { Length, Validate } from 'class-validator';
 import { ec as EC } from 'elliptic';
-import { BaseClassValidator } from 'library/interfaces/BaseClassValidator';
-import { ECCPrivateKeyInterface } from 'library/interfaces/ECCPrivateKey';
-import { ECCPublicKeyInterface } from 'library/interfaces/ECCPublicKey';
-import { IsHexadecimalWithoutPrefix } from 'library/interfaces/IsHexadecimalWithoutPrefix';
+import { BaseClassValidator } from '../interfaces/BaseClassValidator';
+import { ECCPrivateKeyInterface } from '../interfaces/ECCPrivateKey';
+import { ECCPublicKeyInterface } from '../interfaces/ECCPublicKey';
+import { IsHexadecimalWithoutPrefix } from '../interfaces/IsHexadecimalWithoutPrefix';
 import { Secp256k1Curve, Secp256k1CurvePoint } from './Secp256k1BasePoint';
 import { Secp256k1PublicKey } from './Secp256k1PublicKey';
 

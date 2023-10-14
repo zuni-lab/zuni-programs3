@@ -1,17 +1,19 @@
 import { assert } from 'chai';
 import * as fs from 'fs';
 import JSONstringify from 'json-stable-stringify';
-import { BabyJubCurvePoint } from 'library/BabyJub/BabyJubBasePoint';
-import { FFMathUtility } from 'library/BabyJub/FFMathUtility';
-import { ECCKeyStringPair } from 'library/interfaces/ECCKeyStringPair';
-import { ECCUtility } from 'library/utility/ECCUtility';
+import * as snarkjs from 'snarkjs';
+import { Groth16Proof } from 'snarkjs';
+import { BabyJubCurvePoint } from '../BabyJub/BabyJubBasePoint';
+import { FFMathUtility } from '../BabyJub/FFMathUtility';
+import { ECCKeyStringPair } from '../interfaces/ECCKeyStringPair';
+import { ECCUtility } from '../utility/ECCUtility';
 import {
   PrivateCredential,
   PublicCredential,
   Schema,
   VCPresentation,
   VCSynthesisError,
-} from 'library/verifiable_credential/VCInterfaces';
+} from '../verifiable_credential/VCInterfaces';
 import {
   createVerificationSchema,
   decryptPublicCredential,
@@ -22,9 +24,7 @@ import {
   verifyValidSchema,
   verifyVCPresentation,
   verifyVCPresentationFormat,
-} from 'library/verifiable_credential/VCUtility';
-import * as snarkjs from 'snarkjs';
-import { Groth16Proof } from 'snarkjs';
+} from '../verifiable_credential/VCUtility';
 
 describe('Verifiable Credential protocol', function () {
   this.timeout(100000);

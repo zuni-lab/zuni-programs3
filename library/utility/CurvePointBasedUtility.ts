@@ -1,8 +1,7 @@
-import { BabyJubUtility } from 'library/BabyJub/BabyJubUtility';
-import { ECCCurvePoint } from 'library/interfaces/BasePoint';
-import { InvalidContextError } from 'library/interfaces/InvalidContextError';
-import { Secp256k1Utility } from 'library/Secp256k1/Secp256k1Utility';
-import { BasePoint } from '../interfaces/BasePoint';
+import { BabyJubUtility } from '../BabyJub/BabyJubUtility';
+import { BasePoint, ECCCurvePoint } from '../interfaces/BasePoint';
+import { InvalidContextError } from '../interfaces/InvalidContextError';
+import { Secp256k1Utility } from '../Secp256k1/Secp256k1Utility';
 
 export class CurvePointBasedUtility {
   private static context: BasePoint<ECCCurvePoint> | null = null;

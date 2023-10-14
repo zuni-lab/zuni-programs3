@@ -3,21 +3,21 @@ import { BigNumberish, SMT } from 'circomlibjs';
 import { isInt, isJSON } from 'class-validator';
 import { SHA256 } from 'crypto-js';
 import JSONStringify from 'json-stable-stringify';
-import { FFMathUtility } from 'library/BabyJub/FFMathUtility';
+import { omit } from 'lodash';
+import { FFMathUtility } from '../BabyJub/FFMathUtility';
 import {
   MAX_STRING_LENGTH,
   MAX_VALUE_CHUNK,
   NUM_CHAR_EACH_CHUNK,
   VC_SMT_LEVEL,
-} from 'library/constants/VCConstants';
-import { ECCCurvePoint } from 'library/interfaces/BasePoint';
-import { ECCKeyStringPair } from 'library/interfaces/ECCKeyStringPair';
-import { ECCPrivateKeyInterface } from 'library/interfaces/ECCPrivateKey';
-import { ECCPublicKeyInterface } from 'library/interfaces/ECCPublicKey';
-import { WasmField1Interface } from 'library/interfaces/WasmFieldInterface';
-import { ZKEngine, ZKProof } from 'library/interfaces/ZKEngine';
-import { ECCUtility } from 'library/utility/ECCUtility';
-import { omit } from 'lodash';
+} from '../constants/VCConstants';
+import { ECCCurvePoint } from '../interfaces/BasePoint';
+import { ECCKeyStringPair } from '../interfaces/ECCKeyStringPair';
+import { ECCPrivateKeyInterface } from '../interfaces/ECCPrivateKey';
+import { ECCPublicKeyInterface } from '../interfaces/ECCPublicKey';
+import { WasmField1Interface } from '../interfaces/WasmFieldInterface';
+import { ZKEngine, ZKProof } from '../interfaces/ZKEngine';
+import { ECCUtility } from '../utility/ECCUtility';
 import {
   DataSignature,
   DataWithSignature,
@@ -746,13 +746,13 @@ export async function verifyVCPresentation<
   return true;
 }
 
-export async function getRequestedFieldsFromVCPresentation<
+export function getRequestedFieldsFromVCPresentation<
   P extends ECCCurvePoint,
   ZP extends ZKProof,
 >(
   vcpresentation: VCPresentation<P, ZP>,
   verifierPrivateKey: ECCPrivateKeyInterface<P>,
-): Promise<Array<any>> {
+): Array<any> {
   const data = ECCUtility.ecdhDecrypt(
     verifierPrivateKey,
     ECCUtility.newPublicKey(

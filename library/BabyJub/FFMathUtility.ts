@@ -13,7 +13,7 @@ import { getCurveFromName } from 'ffjavascript';
 import {
   FFJavascriptCurve,
   WasmField1Interface,
-} from 'library/interfaces/WasmFieldInterface';
+} from '../interfaces/WasmFieldInterface';
 import { BabyJubCurvePoint } from './BabyJubBasePoint';
 
 export class FFMathUtility {

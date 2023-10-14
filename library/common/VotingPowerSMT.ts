@@ -1,10 +1,10 @@
 import { assert } from 'chai';
 import { BigNumberish, SMT, SMTMemDb } from 'circomlibjs';
 import { IsInt, Max, Min } from 'class-validator';
-import { MAX_TOTAL_VOTING_POWER } from 'library/constants/IndividualVotingPowerConstants';
-import { SMT_LEVEL } from 'library/constants/SMTConstants';
-import { BaseClassValidator } from 'library/interfaces/BaseClassValidator';
-import { ECCCurvePoint } from 'library/interfaces/BasePoint';
+import { MAX_TOTAL_VOTING_POWER } from '../constants/IndividualVotingPowerConstants';
+import { SMT_LEVEL } from '../constants/SMTConstants';
+import { BaseClassValidator } from '../interfaces/BaseClassValidator';
+import { ECCCurvePoint } from '../interfaces/BasePoint';
 import { WasmField1Interface } from '../interfaces/WasmFieldInterface';
 import { IndividualVotingPower } from './IndividualVotingPower';
 export class VotingPowerSMT<P extends ECCCurvePoint> extends BaseClassValidator<

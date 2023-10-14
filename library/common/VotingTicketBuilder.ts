@@ -1,9 +1,9 @@
 import BN from 'bn.js';
 import { assert } from 'chai';
-import { ECCCurvePoint } from 'library/interfaces/BasePoint';
-import { ECCKeyStringPair } from 'library/interfaces/ECCKeyStringPair';
-import { ECCPublicKeyInterface } from 'library/interfaces/ECCPublicKey';
 import { MAX_TOTAL_VOTING_POWER } from '../constants/IndividualVotingPowerConstants';
+import { ECCCurvePoint } from '../interfaces/BasePoint';
+import { ECCKeyStringPair } from '../interfaces/ECCKeyStringPair';
+import { ECCPublicKeyInterface } from '../interfaces/ECCPublicKey';
 import { VotingOptionChange } from './VotingOptionChange';
 import { VotingPowerSMT } from './VotingPowerSMT';
 import { VotingTicket } from './VotingTicket';

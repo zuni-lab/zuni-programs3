@@ -1,13 +1,13 @@
 import { BigNumberish } from 'circomlibjs';
 import { ArrayMaxSize, ArrayMinSize, IsInt, Max, Min } from 'class-validator';
-import { FFMathUtility } from 'library/BabyJub/FFMathUtility';
+import { CircuitSignals } from 'snarkjs';
+import { FFMathUtility } from '../BabyJub/FFMathUtility';
 import {
   MAX_NUMBER_OF_VOTERS,
   MAX_NUMBER_OF_VOTE_OPTIONS,
   SMT_LEVEL,
-} from 'library/constants/VotingConstants';
-import { BaseClassValidator } from 'library/interfaces/BaseClassValidator';
-import { CircuitSignals } from 'snarkjs';
+} from '../constants/VotingConstants';
+import { BaseClassValidator } from '../interfaces/BaseClassValidator';
 
 type CircomPoint = [BigNumberish, BigNumberish];
 

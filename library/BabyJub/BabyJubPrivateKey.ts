@@ -1,8 +1,8 @@
 import BN from 'bn.js';
 import { Validate } from 'class-validator';
-import { BaseClassValidator } from 'library/interfaces/BaseClassValidator';
-import { ECCPrivateKeyInterface } from 'library/interfaces/ECCPrivateKey';
-import { IsHexadecimalWithoutPrefix } from 'library/interfaces/IsHexadecimalWithoutPrefix';
+import { BaseClassValidator } from '../interfaces/BaseClassValidator';
+import { ECCPrivateKeyInterface } from '../interfaces/ECCPrivateKey';
+import { IsHexadecimalWithoutPrefix } from '../interfaces/IsHexadecimalWithoutPrefix';
 import { BabyJubCurvePoint } from './BabyJubBasePoint';
 import { BabyJubPublicKey } from './BabyJubPublicKey';
 import { FFMathUtility } from './FFMathUtility';

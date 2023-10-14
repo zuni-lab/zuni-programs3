@@ -1,5 +1,5 @@
-import { BaseClassValidator } from 'library/interfaces/BaseClassValidator';
-import { ECCKeyStringPair } from 'library/interfaces/ECCKeyStringPair';
+import { BaseClassValidator } from '../interfaces/BaseClassValidator';
+import { ECCKeyStringPair } from '../interfaces/ECCKeyStringPair';
 import { Secp256k1CurvePoint } from './Secp256k1BasePoint';
 import { Secp256k1PrivateKey } from './Secp256k1PrivateKey';
 import { Secp256k1PublicKey } from './Secp256k1PublicKey';

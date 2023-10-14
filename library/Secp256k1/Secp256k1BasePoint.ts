@@ -1,6 +1,6 @@
 import BN from 'bn.js';
 import { curve, ec as Secp256k1CurveInterface } from 'elliptic';
-import { BasePoint } from 'library/interfaces/BasePoint';
+import { BasePoint } from '../interfaces/BasePoint';
 const ec: Secp256k1CurveInterface = new Secp256k1CurveInterface('secp256k1');
 const Secp256k1Curve = ec;
 type Secp256k1CurvePoint = curve.base.BasePoint;
