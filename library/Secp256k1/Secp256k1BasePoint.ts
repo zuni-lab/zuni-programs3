@@ -3,8 +3,8 @@ import { curve, ec as Secp256k1CurveInterface } from 'elliptic';
 import { BasePoint } from '../interfaces/BasePoint';
 const ec: Secp256k1CurveInterface = new Secp256k1CurveInterface('secp256k1');
 const Secp256k1Curve = ec;
-type Secp256k1CurvePoint = curve.base.BasePoint;
-export { Secp256k1Curve, Secp256k1CurveInterface, Secp256k1CurvePoint };
+export type Secp256k1CurvePoint = curve.base.BasePoint;
+export { Secp256k1Curve, Secp256k1CurveInterface };
 
 export class Secp256k1BasePoint implements BasePoint<Secp256k1CurvePoint> {
   point: curve.base.BasePoint;

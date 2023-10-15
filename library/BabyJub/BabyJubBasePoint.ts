@@ -3,8 +3,8 @@ import { Point } from 'circomlibjs';
 import { ec as BabyJubCurveInterface } from 'elliptic';
 import { BasePoint } from '../interfaces/BasePoint';
 import { FFMathUtility } from './FFMathUtility';
-type BabyJubCurvePoint = Point;
-export { BabyJubCurveInterface, BabyJubCurvePoint };
+export type BabyJubCurvePoint = Point;
+export { BabyJubCurveInterface };
 
 export class BabyJubBasePoint implements BasePoint<BabyJubCurvePoint> {
   point: BabyJubCurvePoint;

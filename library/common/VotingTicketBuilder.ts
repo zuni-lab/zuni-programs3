@@ -96,7 +96,7 @@ export class VotingTicketBuilder {
         throw err;
       } else {
         throw new InvalidVotingTicketError(
-          err?.message ?? 'Voting power allocation is invalid',
+          'Voting power allocation is invalid',
         );
       }
     }
