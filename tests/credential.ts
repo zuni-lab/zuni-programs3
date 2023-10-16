@@ -11,7 +11,7 @@ import {
   MULTIBASE_PREFIX,
 } from './utils';
 
-const ANCHOR_ERROR_ACCOUNT_NOT_INITIALIZED = 'AccountNotInitialized';
+// const ANCHOR_ERROR_ACCOUNT_NOT_INITIALIZED = 'AccountNotInitialized';
 const ANCHOR_ERROR_UNAUTHORIZED = 'Unauthorized';
 
 const VERIFICATION_RELATIONSHIP = {
@@ -29,11 +29,11 @@ const VERIFICATION_RELATIONSHIP = {
   },
 };
 
-const duplicate_err = (address: string) => {
-  return `Allocate: account Address { address: ${address}, base: None } already in use`;
-};
+// const duplicate_err = (address: string) => {
+//   return `Allocate: account Address { address: ${address}, base: None } already in use`;
+// };
 
-describe.only('Credential', () => {
+describe('Credential', () => {
   // Configure the client to use the local cluster.
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
