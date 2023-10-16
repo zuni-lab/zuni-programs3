@@ -4,7 +4,7 @@ import { keccak_256 } from '@noble/hashes/sha3';
 export const MULTIBASE_PREFIX = {
   base64: 'm',
   base58btc: 'z',
-  hex: 'h',
+  hex: 'f',
 };
 
 export const KEY_TYPE = {
